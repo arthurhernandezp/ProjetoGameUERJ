@@ -6,5 +6,7 @@ Projeto feito para a materia Progamação orientada a eventos para jogos / Profe
 <li> Descreva o jogo em linhas gerais.</li>
 <li> Poste links ou vídeos relacionados</li>
 <li> O que você pretende e não pretende implementar.</li>
-<li> Qual o link para o repositório com o código fonte?</li>
+<li> Qual o link para o repositório com o código fonte?
+     R:https://github.com/arthurhernandezp/ProjetoGameUERJ
+</li>
 </ul>
