@@ -1,6 +1,6 @@
 # Projeto-SDL_Game-UERJ
 Projeto feito para a materia Programação de Jogos / Professor Francisco Figueiredo G. Sant'anna
-##
+
 <ul>
      <li> Qual o nome do jogo?</li>
            <ul>
