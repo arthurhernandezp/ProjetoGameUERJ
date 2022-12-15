@@ -8,7 +8,6 @@ Projeto feito para a materia Programação de Jogos / Professor Francisco Figuei
           <ul>
                <li> A ideia do jogo é ambientar uma cabana de pesca em 2d com mini game para conseguir pescar o peixe, com um sistema de inventário para armazenar o peixe e vender para pontuar.</li>
            </ul>
-          <br> 
      <li> Poste links ou vídeos relacionados</li>
           <ul>
                <li>https://www.youtube.com/watch?v=sKlcCplUODw&t=33s</li>
