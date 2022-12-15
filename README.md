@@ -1,4 +1,4 @@
-# Projeto-Paint-Java
+# Projeto-SDL_Game-UERJ
 Projeto feito para a materia Progamação orientada a eventos para jogos / Professor Francisco Figueiredo G. Sant'anna
 ##
 <ul>
