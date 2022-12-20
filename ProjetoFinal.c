@@ -60,25 +60,30 @@ int main (int argc, char* args[])
                          1000, 600, SDL_WINDOW_SHOWN
                       );
     SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
-    SDL_Texture* img = IMG_LoadTexture(ren, "fisherman2.png");
-    SDL_Texture* img2 = IMG_LoadTexture(ren, "Fisherman_idle.png");
-    SDL_Texture* img3 = IMG_LoadTexture(ren, "Water.png");
+    SDL_Texture* playerText = IMG_LoadTexture(ren, "fisherman2.png");
+    SDL_Texture* agua = IMG_LoadTexture(ren, "Water.png");
     SDL_Texture* fundoTela = IMG_LoadTexture(ren, "bg1.png");
     SDL_Texture* grama = IMG_LoadTexture(ren, "grass.png");
 	SDL_Texture* cabana = IMG_LoadTexture(ren, "cabana.png");
-    assert(img != NULL);
+	
+    assert(playerText != NULL);
+    assert(agua != NULL);
+    assert(fundoTela != NULL);
+    assert(grama != NULL);
+    assert(cabana != NULL);
+    
     int fundoAux = 0;
-    /* EXECUÇÃO */
     bool continua = true;
     bool evento = false;
-
     SDL_Event evt;
     int isup = 1;
     int espera = 100;
+    
     SDL_Rect g = {0,536,484,64};
     SDL_Rect w = {444,540,584,64};
     SDL_Rect h = {300,370,384,244};
     SDL_Rect player = { 0,460, 100,80 };
+    /* EXECUÇÃO */
     while (continua) {
         SDL_RenderClear(ren);
         SDL_Rect c;
@@ -88,10 +93,10 @@ int main (int argc, char* args[])
         cG = (SDL_Rect) {   0,0, 484,64 };
         cW = (SDL_Rect) {   0,0, 584,64 };
         cH = (SDL_Rect) {   0,0, 192,122 };
-	SDL_RenderCopy(ren, fundoTela, NULL, NULL);	
-	SDL_RenderCopy(ren, img3, &cW, &w);
-	SDL_RenderCopy(ren, grama, &cG, &g);
-	SDL_RenderCopy(ren, cabana, &cH, &h);
+		SDL_RenderCopy(ren, fundoTela, NULL, NULL);	
+		SDL_RenderCopy(ren, agua, &cW, &w);
+		SDL_RenderCopy(ren, grama, &cG, &g);
+		SDL_RenderCopy(ren, cabana, &cH, &h);
       	Uint32 antes = SDL_GetTicks() + 500;
         int isevt = AUX_WaitEventTimeoutCount(&evt,&espera);       
         if(isevt){       	
@@ -100,17 +105,12 @@ int main (int argc, char* args[])
 					continua = false;
 					break;	
 				case SDL_KEYDOWN:
-
 					switch (evt.key.keysym.sym){  
 						case SDLK_RIGHT:
 							if(player.x < 625){
 								if(isup < 0) isup *= -1;
-								if(player.x < 280 || player.y <= 417)  { 
-									player.x += 15;
-
-								}
+								if(player.x < 280 || player.y <= 417) player.x += 10;
 								else if (player.x >= 280 && player.y > 417){
-
 									player.x+=8; 
 									player.y-=5;
 								} 
@@ -121,13 +121,10 @@ int main (int argc, char* args[])
 						case SDLK_LEFT:
 							if(isup > 0) isup *= -1;
 							if(player.x >0){
-								if(player.x <=285 || player.x > 360)  {
-									player.x -= 15;
-								}
+								if(player.x <=285 || player.x > 360) player.x -= 10;
 								else{
 									player.x-=8; 
 									player.y+=5;
-
 								}
 								isup--;
 								evento = true;
@@ -140,10 +137,12 @@ int main (int argc, char* args[])
 			}
 		}
 		else{   
-			espera = 500;
+			espera = 300;
 			if(isup < 0) c = (SDL_Rect) {0,48, 48,48 };
 			else c = (SDL_Rect) {0,0, 48,48 };
-			evento = false;	
+			evento = false;
+			//mudaFundo(fundo,&fundoAux,ren);
+			//fundoAux++;		
 		}
 		if(evento){
 			switch(isup ){
@@ -185,9 +184,15 @@ int main (int argc, char* args[])
 					c = (SDL_Rect) { 240,48, 48,48 };
 				break;
 			}
-			SDL_RenderCopy(ren, img, &c, &player);
+			playerText = IMG_LoadTexture(ren, "fisherman2.png");
+			//SDL_RenderCopy(ren, img, &c, &player);
 		}
-		else SDL_RenderCopy(ren, img2, &c, &player);
+		else {
+			playerText = IMG_LoadTexture(ren, "Fisherman_idle.png");
+			//SDL_RenderCopy(ren, img, &c, &player);
+		}
+		SDL_RenderCopy(ren, playerText, &c, &player);
+		//SDL_RenderCopy(ren, img2, &c, &player);
 		SDL_RenderPresent(ren);
 		if(isup > 6){
 			isup = 1;
@@ -224,9 +229,9 @@ int main (int argc, char* args[])
     }
 
     /* FINALIZACAO */
-    SDL_DestroyTexture(img);
-    SDL_DestroyTexture(img2);
-    SDL_DestroyTexture(img3);
+    SDL_DestroyTexture(playerText);
+    //SDL_DestroyTexture(img2);
+    SDL_DestroyTexture(agua);
     SDL_DestroyTexture(fundoTela);
     SDL_DestroyTexture(grama);
     SDL_DestroyRenderer(ren);
