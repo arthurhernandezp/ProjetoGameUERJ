@@ -52,7 +52,7 @@ int main (int argc, char* args[])
     SDL_Color focus = { 0,157,231,255 };
     char fonte[17] = "ArcadeClassic.ttf";
     TTF_Font *ourFont = TTF_OpenFont(fonte,40);
-    SDL_Texture* bgPause = IMG_LoadTexture(ren, "bgpause.png");
+    SDL_Texture* bgmenu = IMG_LoadTexture(ren, "bgmenu.png");
     struct SDL_Surface* listaSurfaceText[3];
     listaSurfaceText[0] = TTF_RenderText_Solid(ourFont, "Peixe IO",padrao);  
     listaSurfaceText[1] = TTF_RenderText_Solid(ourFont, "CoNTINUE",padrao); 
@@ -69,15 +69,15 @@ int main (int argc, char* args[])
     SDL_Rect recQuit = {550,340,100,40};
     bool selecionado = false;
     bool gameIsRunning = true;
-    bool playing = true;
-    bool pause = false;
+    bool playing = false;;
+    bool menu = true;
     bool evento = false;
 	int i = 0;
     
 
     SDL_Texture* playerText = IMG_LoadTexture(ren, "fisherman2.png");
     SDL_Texture* agua = IMG_LoadTexture(ren, "Water.png");
-    SDL_Texture* fundoTela = IMG_LoadTexture(ren, "bg1.png");
+    SDL_Texture* fundoTela = IMG_LoadTexture(ren, "bg7.png");
     SDL_Texture* grama = IMG_LoadTexture(ren, "grass.png");
 	SDL_Texture* cabana = IMG_LoadTexture(ren, "cabana.png");
 	
@@ -156,7 +156,7 @@ int main (int argc, char* args[])
 				switch (evt.type ) {
 					case SDL_QUIT:
 						playing = false;
-						pause = false;
+						menu = false;
 						gameIsRunning = false;
 						break;	
 					case SDL_KEYDOWN:
@@ -197,8 +197,9 @@ int main (int argc, char* args[])
 								fundoAux++;
 								break;
 							case SDLK_ESCAPE:
-								pause = true;
+								menu = true;
 								break;
+								
 			 		}
 				}
 			}
@@ -249,7 +250,7 @@ int main (int argc, char* args[])
 					fundoAux = 0;
 				break;
 			}
-			if(pause){
+			if(menu){
 				playing = false;
 				SDL_SetRenderDrawColor(ren, 0xFF,0xFF,0xFF,0x00);
 				SDL_RenderClear(ren);
@@ -258,10 +259,10 @@ int main (int argc, char* args[])
 			}
 			SDL_RenderPresent(ren);
 		}
-		while (pause) {
+		while (menu) {
 			SDL_SetRenderDrawColor(ren,0,255,0,255);
 			SDL_RenderClear(ren);
-			SDL_RenderCopy(ren, bgPause, NULL, NULL);		
+			SDL_RenderCopy(ren, bgmenu, NULL, NULL);		
 			SDL_RenderCopy(ren,listaTextureText[0],NULL,&recNome);
 			SDL_RenderCopy(ren,listaTextureText[1],NULL,&recContinue);
 			SDL_RenderCopy(ren,listaTextureText[2],NULL,&recQuit);
@@ -272,7 +273,7 @@ int main (int argc, char* args[])
 					case SDL_QUIT:
 						playing = false;
 						gameIsRunning = false;
-						pause = false;
+						menu = false;
 					break;
 					case SDL_MOUSEMOTION:
 							SDL_GetMouseState(&mouse.x,&mouse.y);
@@ -297,12 +298,12 @@ int main (int argc, char* args[])
 						if(event.button.button==SDL_BUTTON_LEFT){
 							if(event.button.state==SDL_RELEASED){
 								if(SDL_PointInRect(&mouse,&recQuit) && selecionado) {
-									gameIsRunning = false;
-									pause = false;
+									gameIsRunning = false;				
+									menu = false;
 								}
 							}
 							else if(SDL_PointInRect(&mouse,&recContinue) && selecionado){
-									pause = false;
+									menu = false;
 									playing=  true;
 							}
 						}
@@ -312,11 +313,14 @@ int main (int argc, char* args[])
 							case SDLK_ESCAPE:
 								playing = true;
 								break; 
+								
 						}
 				}
 			}
 			if(playing){
-				pause = false;
+				menu = false;
+				mouse.x = 0;
+				mouse.y = 0;
 				SDL_SetRenderDrawColor(ren, 0xFF,0xFF,0xFF,0x00);
 				SDL_RenderClear(ren);
 				SDL_RenderPresent(ren);
@@ -327,7 +331,7 @@ int main (int argc, char* args[])
 	}
     /* FINALIZACAO */
     
-    SDL_DestroyTexture(bgPause);
+    SDL_DestroyTexture(bgmenu);
     SDL_DestroyTexture(playerText);
     SDL_DestroyTexture(agua);
     SDL_DestroyTexture(fundoTela);
