@@ -4,7 +4,7 @@ Projeto feito para a materia Programação de Jogos / Professor Francisco Figuei
 <ul>
      <li> Qual o nome do jogo?</li>
            <ul>
-               <li> .</li>
+               <li> .Peixe IO</li>
            </ul>
      <li> Descreva o jogo em linhas gerais.</li>
           <ul>
