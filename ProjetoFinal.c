@@ -24,7 +24,7 @@ int AUX_WaitEventTimeoutCount (SDL_Event* evt, Uint32* ms){
 		*ms -= depois;		
 	}
 	return isevt;
-}
+}*/
 int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms){
     Uint32 antes = SDL_GetTicks();
     if (SDL_WaitEventTimeout(evt, *ms)) {
@@ -35,7 +35,7 @@ int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms){
     } else return 0;
 }
 
-
+/*
 int AUX_WaitEventTimeoutCount(SDL_Event* event, Uint32* wait) {
     Uint32 before = SDL_GetTicks();
     int is_event = SDL_WaitEventTimeout(event, *wait);
@@ -50,7 +50,7 @@ int AUX_WaitEventTimeoutCount(SDL_Event* event, Uint32* wait) {
     }
 
     return is_event;
-}*/
+}
 int AUX_WaitEventTimeoutCount(SDL_Event* event, Uint32* ms)
 {
 	Uint32 antes, agora = 0;
@@ -67,7 +67,7 @@ int AUX_WaitEventTimeoutCount(SDL_Event* event, Uint32* ms)
 	}
 
 	return happened;
-}
+}*/
 
 void chamaMenu(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
     TTF_Init();
@@ -176,7 +176,7 @@ SDL_Window* create_window(void) {
                       );
 
     if(win==NULL) {
-        printf("Janela não pôde ser criada.\nSDL_Error: %s\n", SDL_GetError());
+        printf("Janela não foi criada.\nSDL_Error: %s\n", SDL_GetError());
     }
 
     return win;
@@ -186,7 +186,7 @@ SDL_Renderer* create_renderer(SDL_Window* win) {
     SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
 
     if(win==NULL) {
-        printf("Janela não pôde ser criada.\nSDL_Error: %s\n", SDL_GetError());
+        printf("Janela não foi criada.\nSDL_Error: %s\n", SDL_GetError());
     }
 
     SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
