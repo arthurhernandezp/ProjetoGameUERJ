@@ -13,31 +13,18 @@ void mudaCor(SDL_Renderer* ren,SDL_Surface* listaS[],SDL_Texture* listaT[],SDL_C
 	listaS[i] = TTF_RenderText_Solid(ourFont, nome,cor);  
 	listaT[i] = SDL_CreateTextureFromSurface(ren,listaS[i]);
 }
-/*
-int AUX_WaitEventTimeoutCount (SDL_Event* evt, Uint32* ms){
-	Uint32 antes = SDL_GetTicks();
-	Uint32 depois = 0;
-	int isevt = SDL_WaitEventTimeout(evt, *ms);
-	if(isevt){
-		depois = (SDL_GetTicks() - antes);
-		if(*ms < depois) depois = *ms;
-		*ms -= depois;		
-	}
-	return isevt;
-}*/
+
 int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms){
-		
-		Uint32 antes = SDL_GetTicks();
-		int aconteceuEvt = SDL_WaitEventTimeout(evt, *ms);
-		if (aconteceuEvt) {
-			int temp = *ms - (SDL_GetTicks() - antes);
-			if(0 > temp) *ms = 0;
-			//*ms = MAX(0, temp);
-			return 1;
-		} else return 0;
+    Uint32 antes = SDL_GetTicks();
+    SDL_FlushEvent(SDL_MOUSEMOTION);
+    if (SDL_WaitEventTimeout(evt, *ms)) {
+		*ms = MAX(0, *ms - (int)(SDL_GetTicks() - antes));
+		return 1;
+    } return 0;
 }
 
 void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
+
 	bool walking = false;
 	int i = 0;
 	
@@ -69,11 +56,9 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
     assert(grama != NULL);
     assert(cabana != NULL);
     
-
     unsigned short int fundoAux = 0;
-    SDL_Event evt;
     short int frame = 1;
-    int espera = 500;    
+    int espera = 0;    
     SDL_Rect gDec = {0,507,32,33};
     SDL_Rect g = {0,536,484,64};
     SDL_Rect w = {444,540,584,64};
@@ -86,30 +71,23 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
 	SDL_Rect cGD = (SDL_Rect) {0,0, 32,33 };
 	SDL_Rect cArv = (SDL_Rect) {89.6,0, 89.6,132 };
 
-	SDL_Rect cPlayer =  {   0,0, 48,48 };
+	SDL_Rect cPlayer =  { 0,0, 48,48 };
+	Uint32 antes = 0;
+	
 	while (*playing) {
-		SDL_RenderClear(ren);
-		SDL_RenderCopy(ren, fundoTela, NULL, NULL);		
-		SDL_RenderCopy(ren, agua, &cW, &w);
-		SDL_RenderCopy(ren, grama, &cG, &g);
-		SDL_RenderCopy(ren, cabana, &cH, &h);
-		SDL_RenderCopy(ren, listaDec[4], &cArv, &arvore);
-		
-		for(i = 0; i <= 3;i++){
-			SDL_RenderCopy(ren, listaDec[i], &cGD, &gDec);
-			gDec.x+=100;
-		}
-		gDec.x = 0;
-	  	int isevt = AUX_WaitEventTimeoutCount(&evt,&espera);
-	  	SDL_PumpEvents();
-	 	//int isevt = SDL_WaitEventTimeout(&evt, 250);              
-	  	if(isevt ){       	
-			switch (evt.type ) {
-				case SDL_QUIT:
-					*playing = false;
-					*menu = false;
-					*gameIsRunning = false;
-					break;	
+	
+		espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
+	  	SDL_Event evt; int isevt = AUX_WaitEventTimeoutCount(&evt,&espera);    
+	  	antes = SDL_GetTicks();
+	  	
+	  	if(isevt){       
+			switch (evt.type) {
+				case SDL_WINDOWEVENT:
+                	if (SDL_WINDOWEVENT_CLOSE == evt.window.event){
+					    *playing = false;
+					    *menu = false;
+					    *gameIsRunning = false;
+					} break;	
 				case SDL_KEYDOWN:
 					switch (evt.key.keysym.sym){  
 						case SDLK_RIGHT:
@@ -147,22 +125,27 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
 							*playing = false;
 							SDL_RenderPresent(ren);
 							break;
-							
 		 		}
-		 		default: 
-			 		SDL_PumpEvents();
-		 			SDL_FlushEvent(evt.type);
-		 			break;
 			}
-		}
-		else{   
-			espera = 250;
+		} else {   
 			walking = false;	
-			if(cPlayer.x < 240) cPlayer.x +=48;
+			if (cPlayer.x < 240) cPlayer.x +=48;
 			else cPlayer.x = 0;
-
+			espera = 500;
 		}
-
+		
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, fundoTela, NULL, NULL);		
+		SDL_RenderCopy(ren, agua, &cW, &w);
+		SDL_RenderCopy(ren, grama, &cG, &g);
+		SDL_RenderCopy(ren, cabana, &cH, &h);
+		SDL_RenderCopy(ren, listaDec[4], &cArv, &arvore);
+		
+		for(i = 0; i <= 3;i++){
+			SDL_RenderCopy(ren, listaDec[i], &cGD, &gDec);
+			gDec.x+=100;
+		} gDec.x = 0;
+		
 		if(!walking) playerText = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
 		else playerText = IMG_LoadTexture(ren, "imgs/fisherman2.png");
 		SDL_RenderCopy(ren, playerText, &cPlayer, &player);	
@@ -193,19 +176,21 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
 				fundoAux = 0;
 			break;
 		}
+		
 		SDL_RenderPresent(ren);
+		
 	}	
+	
 	SDL_DestroyTexture(playerText);
 	SDL_DestroyTexture(agua);
 	SDL_DestroyTexture(fundoTela);
 	SDL_DestroyTexture(grama);
 	SDL_DestroyTexture(cabana);
-	for(i = 0; i < 3; i++){
+	for(i = 0; i < 3; i++)
 		SDL_DestroyTexture(listaBarrel[i]);
-	}
-	for(i = 0; i < 4; i++){
+	for(i = 0; i < 4; i++)
 		SDL_DestroyTexture(listaDec[i]);
-	}
+	
 }
 
 void chamaMenu(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
