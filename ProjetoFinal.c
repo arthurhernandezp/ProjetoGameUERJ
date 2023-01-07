@@ -73,8 +73,9 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
 
 	SDL_Rect cPlayer =  { 0,0, 48,48 };
 	Uint32 antes = 0;
-	int var = 1;
-	while (*playing) {	
+	
+	while (*playing) {
+	
 		espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 	  	SDL_Event evt; int isevt = AUX_WaitEventTimeoutCount(&evt,&espera);    
 	  	antes = SDL_GetTicks();
@@ -128,13 +129,10 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
 			}
 		} else {   
   			contFundo += 1;
- 			if (contFundo == 60){
+ 			if (contFundo == 20){
 				fundoAux++;
 				contFundo = 0;
 			}
-			w.y = w.y + 1 * (var);
-			var *= -1;
-	
 			walking = false;	
 			if (cPlayer.x < 240) cPlayer.x +=48;
 			else cPlayer.x = 0;
@@ -143,10 +141,9 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
 		
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, fundoTela, NULL, NULL);		
-		
-		SDL_RenderCopy(ren, cabana, &cH, &h);
 		SDL_RenderCopy(ren, agua, &cW, &w);
 		SDL_RenderCopy(ren, grama, &cG, &g);
+		SDL_RenderCopy(ren, cabana, &cH, &h);
 		SDL_RenderCopy(ren, listaDec[4], &cArv, &arvore);
 		
 		for(i = 0; i <= 3;i++){
