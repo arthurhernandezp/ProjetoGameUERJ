@@ -101,7 +101,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 									else personagem->corte.x = 0;
 									if(personagem->corte.y != 0) personagem->corte.y = 0;
 									
-									if(personagem->rect.x < 280 || personagem->rect.y <= 417) personagem->rect.x += 10;
+									if(personagem->rect.x < 280 || personagem->rect.y <= 417) personagem->rect.x += 7;
 									else if (personagem->rect.x >= 280 && personagem->rect.y > 417){
 										personagem->rect.x+=8; 
 										personagem->rect.y-=5;
@@ -128,7 +128,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 								if(personagem->corte.y != 48) personagem->corte.y = 48;
 								
 								if(personagem->rect.x >0){	
-									if(personagem->rect.x <=285 || personagem->rect.x > 360) personagem->rect.x -= 10;
+									if(personagem->rect.x <=285 || personagem->rect.x > 360) personagem->rect.x -= 7;
 									else{
 										personagem->rect.x-=8; 
 										personagem->rect.y+=5;
