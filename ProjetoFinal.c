@@ -21,9 +21,22 @@ typedef struct dadosPlayer{
 
 typedef struct dadosBarco{
 	SDL_Rect rect;
-	SDL_Rect corte;
 	SDL_Texture* texture;
 }dadosBarco;
+
+typedef struct dadosBotao{
+	SDL_Rect rect;
+	SDL_Texture* texture;
+	unsigned short int state;
+}dadosBotao;
+
+typedef struct dadosMouse{
+	SDL_Rect rect;
+	SDL_Point point;
+	SDL_Texture *texture;
+	unsigned short int state;
+	//state 0: cursor padrao do windows// state 1: cursor de pesca
+}dadosMouse;
 
 enum lugar {onGround = 0,onBoat};
 enum estado {idle = 0,walking,noBarco,remando,fishing};
@@ -45,6 +58,14 @@ int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms){
 void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dadosPlayer *personagem,SDL_Texture** ceu,dadosBarco *barco){
 
 	int i = 0; int contFundo = 0;
+	dadosMouse mouse;
+	mouse.rect.x = 0; mouse.rect.y = 0; mouse.rect.w = 30; mouse.rect.h = 50;
+	mouse.state = 0;
+	mouse.texture = IMG_LoadTexture(ren, "imgs/mouse.png");
+	
+	dadosBotao botao;
+	botao.rect = (SDL_Rect) {632,375,35,35};
+	botao.texture = IMG_LoadTexture(ren, "imgs/botao.png");
 	
     SDL_Texture* agua = IMG_LoadTexture(ren, "imgs/Water.png");
     SDL_Texture* grama = IMG_LoadTexture(ren, "imgs/grass.png");
@@ -55,7 +76,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 	listaDec[1] = IMG_LoadTexture(ren, "imgs/Grass2.png");
 	listaDec[2] = IMG_LoadTexture(ren, "imgs/Grass3.png");
 	listaDec[3] = IMG_LoadTexture(ren, "imgs/Grass4.png");
-	listaDec[4] = IMG_LoadTexture(ren, "imgs/arvores.png");
+	listaDec[4] = IMG_LoadTexture(ren, "imgs/arvores.png");	
 	
 	for(i = 0; i <= 3; i++){
 		assert(listaDec[i] != NULL);
@@ -65,20 +86,16 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
     assert(cabana != NULL);
     
     unsigned short int fundoAux = 0;
-    short int frame = 1;
     int espera = 0;    
     SDL_Rect gDec = {0,507,32,33};
     SDL_Rect g = {0,536,484,64};
-    SDL_Rect w = {444,540,584,64};
+    SDL_Rect w = {454,540,584,64};
     SDL_Rect h = {300,370,384,244};
     SDL_Rect arvore = {130,324,179.2,224};
-	SDL_Rect cW = (SDL_Rect) {0,0, 584,64 };
-	SDL_Rect cG = (SDL_Rect) {0,0, 484,64 };
-	SDL_Rect cH = (SDL_Rect) {0,0, 192,122 };
-	SDL_Rect cGD = (SDL_Rect) {0,0, 32,33 };
 	SDL_Rect cArv = (SDL_Rect) {89.6,0, 89.6,132 };
 	Uint32 antes = 0;
 	int var = 1;
+	
 	while (*playing) {	
 		espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 	  	SDL_Event evt; int isevt = AUX_WaitEventTimeoutCount(&evt,&espera);    
@@ -153,6 +170,8 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 						case SDLK_ESCAPE:
 							*menu = true;
 							*playing = false;
+							SDL_ShowCursor(true);
+							mouse.state = 0;
 							SDL_RenderPresent(ren);
 							break;
 						case SDLK_e:
@@ -176,6 +195,14 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 							SDL_FlushEvent(evt.type);
 							break;
 		 		}
+		 		case SDL_MOUSEMOTION:
+		 			SDL_GetMouseState(&mouse.point.x,&mouse.point.y);
+		 			if(personagem->lugar == onBoat && SDL_PointInRect(&mouse.point,&w) && !*menu){
+		 				mouse.state = 1;
+		 				mouse.rect.x = mouse.point.x;
+		 				mouse.rect.y = mouse.point.y- mouse.rect.h;
+		 			}
+		 			else mouse.state = 0;
 		 		default:
 					SDL_FlushEvent(evt.type);
 					break;
@@ -195,26 +222,10 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 			}
 			espera = 500;
 		}
-		if(fundoAux >= 9) fundoAux = 1;
-		SDL_RenderClear(ren);
-		SDL_RenderCopy(ren, *ceu, NULL, NULL);		
-		SDL_RenderCopy(ren, cabana, &cH, &h);
-		SDL_RenderCopy(ren, grama, &cG, &g);
-		SDL_RenderCopy(ren, listaDec[4], &cArv, &arvore);
-		for(i = 0; i <= 3;i++){
-			SDL_RenderCopy(ren, listaDec[i], &cGD, &gDec);
-			gDec.x+=100;
-		} gDec.x = 0;
-		
 		if(personagem->state == idle && personagem->lugar == onGround) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
 		else if(personagem->state == walking && personagem->lugar == onGround ) personagem->texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
 		else if(personagem->lugar == onBoat ) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
 		
-		
-		SDL_RenderCopy(ren, barco->texture, &barco->corte, &barco->rect);		
-		SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);
-		SDL_RenderCopy(ren, agua, &cW, &w);
-		SDL_RenderCopy(ren, grama, &cG, &g);
 		switch(fundoAux){
 			case 1:
 				*ceu = IMG_LoadTexture(ren, "imgs/bg2.png");
@@ -241,7 +252,33 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 				*ceu = IMG_LoadTexture(ren, "imgs/bg1.png");			
 			break;
 		}
+	
+		if(fundoAux >= 9) fundoAux = 1;
+		SDL_RenderClear(ren);
+		SDL_RenderCopy(ren, *ceu, NULL, NULL);		
+		SDL_RenderCopy(ren, cabana, NULL, &h);
+		SDL_RenderCopy(ren, grama, NULL, &g);
+		SDL_RenderCopy(ren, listaDec[4], &cArv, &arvore);
+		for(i = 0; i <= 3;i++){
+			SDL_RenderCopy(ren, listaDec[i], NULL, &gDec);
+			gDec.x+=100;
+		} gDec.x = 0;	
+		SDL_RenderCopy(ren, barco->texture, NULL, &barco->rect);		
+		SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);
+		SDL_RenderCopy(ren, agua, NULL, &w);
+		SDL_RenderCopy(ren, grama, NULL, &g);		
+		if(mouse.state == 1){
+			SDL_ShowCursor(false);
+			SDL_RenderCopy(ren, mouse.texture, NULL, &mouse.rect);		
+		}
+		else if(mouse.state == 0) SDL_ShowCursor(true);
 		
+		if( (personagem->rect.x >= barco->rect.x && personagem->lugar == onGround) ||
+		(personagem->rect.x > 554 && personagem->rect.x < 652 && personagem->lugar == onBoat ) ) {
+			SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
+		}	
+		
+
 		SDL_RenderPresent(ren);
 		
 	}	
@@ -249,6 +286,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 	SDL_DestroyTexture(agua);
 	SDL_DestroyTexture(grama);
 	SDL_DestroyTexture(cabana);
+	SDL_DestroyTexture(mouse.texture);
 	for(i = 0; i < 4; i++)
 		SDL_DestroyTexture(listaDec[i]);
 	
@@ -287,9 +325,7 @@ void chamaMenu(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
     Mix_Volume(1, 4);
     Mix_Music *backgroundSound = Mix_LoadMUS("menu.mp3");
     int count = 0;
-    //setVolume(40);
     while(*menu){
-			//SDL_RenderClear(ren);
 			SDL_RenderCopy(ren, bgmenu, NULL, NULL);		
 			SDL_RenderCopy(ren,listaTextureText[0],NULL,&recNome);
 			SDL_RenderCopy(ren,listaTextureText[1],NULL,&recContinue);
@@ -353,8 +389,6 @@ void chamaMenu(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
 			}
 			if(*playing){
 				*menu = false;
-				//SDL_SetRenderDrawColor(ren, 0xFF,0xFF,0xFF,0x00);
-				//SDL_RenderClear(ren);
 				SDL_RenderPresent(ren);
 				break;
 			}
@@ -405,22 +439,16 @@ int main (int argc, char* args[]){
     bool selecionado = false;
     bool gameIsRunning = true;
     bool playing = false;
-    bool menu = true;
-    dadosBarco barco;
+    bool menu = true; 
     dadosPlayer player;
-    //player.rect.x =0; player.rect.y = 460; player.rect.w= 100 ; player.rect.h =80;
-    //player.corte.x =0; player.corte.y = 460; player.corte.w= 100 ; player.corte.h =80;
     player.rect = (SDL_Rect) {0,460,100,80};
     player.corte = (SDL_Rect) { 0,0, 48,48 };
-    //enum estado {idle = 0,walking,noBarco,remando,fishing};
     player.state = idle;
     player.lugar = onGround;
-    // player.state[1] = walking; player.state[2] = noBarco; player.state[3] = remando; player.state[4] = fishing;
 	player.texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
 	SDL_Texture* ceu = IMG_LoadTexture(ren, "imgs/bg7.png");
-	
+	dadosBarco barco;
 	barco.rect = (SDL_Rect) { 564,513, 148,36 };
-	barco.corte = (SDL_Rect) { 0,0, 74,18 };
 	barco.texture = IMG_LoadTexture(ren, "imgs/Boat.png");
 	
     /* EXECUÇÃO */
