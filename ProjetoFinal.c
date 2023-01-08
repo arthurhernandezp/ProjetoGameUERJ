@@ -14,9 +14,18 @@ typedef struct dadosPlayer{
 	SDL_Rect corte;
 	SDL_Texture* texture;
 	unsigned short int state;
-	//state 0 idle;  1 walking  ;  2 onBoat  ; 3 remando   ;  4 fishing
+	//state 0 idle;  1 walking  ; 2 remando   ; 3 fishing
+	unsigned short int lugar;
+	// lugar 0 onGround; 1 onBoat
 }dadosPlayer;
 
+typedef struct dadosBarco{
+	SDL_Rect rect;
+	SDL_Rect corte;
+	SDL_Texture* texture;
+}dadosBarco;
+
+enum lugar {onGround = 0,onBoat};
 enum estado {idle = 0,walking,noBarco,remando,fishing};
 
 void mudaCor(SDL_Renderer* ren,SDL_Surface* listaS[],SDL_Texture* listaT[],SDL_Color cor,int i,char* nome,TTF_Font *ourFont){
@@ -33,7 +42,7 @@ int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms){
     } return 0;
 }
 
-void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dadosPlayer *personagem,SDL_Texture** ceu){
+void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dadosPlayer *personagem,SDL_Texture** ceu,dadosBarco *barco){
 
 	int i = 0; int contFundo = 0;
 	
@@ -86,29 +95,56 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 				case SDL_KEYDOWN:
 					switch (evt.key.keysym.sym){  
 						case SDLK_RIGHT:
-							if(personagem->rect.x < 625){
-								if(personagem->corte.x < 240) personagem->corte.x += 48;
-								else personagem->corte.x = 0;
-								if(personagem->corte.y != 0) personagem->corte.y = 0;
-								if(personagem->rect.x < 280 || personagem->rect.y <= 417) personagem->rect.x += 10;
-								else if (personagem->rect.x >= 280 && personagem->rect.y > 417){
-									personagem->rect.x+=8; 
-									personagem->rect.y-=5;
-								} 
-								personagem->state = walking;
+							if(personagem->lugar == onGround){
+								if(personagem->rect.x < 625){
+									if(personagem->corte.x < 240) personagem->corte.x += 48;
+									else personagem->corte.x = 0;
+									if(personagem->corte.y != 0) personagem->corte.y = 0;
+									
+									if(personagem->rect.x < 280 || personagem->rect.y <= 417) personagem->rect.x += 10;
+									else if (personagem->rect.x >= 280 && personagem->rect.y > 417){
+										personagem->rect.x+=8; 
+										personagem->rect.y-=5;
+									} 
+									personagem->state = walking;
+								}
+							}
+							else if(personagem->lugar == onBoat){
+								
+								if(personagem->rect.x < 852){
+									if(personagem->corte.x < 144) personagem->corte.x += 48;
+									else personagem->corte.x = 0;
+									if(personagem->corte.y != 0) personagem->corte.y = 0;
+									personagem->rect.x+=4;
+									barco->rect.x += 4;
+									personagem->state = remando;
+								}
 							}
 						break;
 						case SDLK_LEFT:		
-							if(personagem->corte.x < 240) personagem->corte.x +=48;
-							else personagem->corte.x = 0;
-							if(personagem->corte.y != 48) personagem->corte.y = 48;
-							if(personagem->rect.x >0){	
-								if(personagem->rect.x <=285 || personagem->rect.x > 360) personagem->rect.x -= 10;
-								else{
-									personagem->rect.x-=8; 
-									personagem->rect.y+=5;
+							if(personagem->lugar == onGround){
+								if(personagem->corte.x < 240) personagem->corte.x +=48;
+								else personagem->corte.x = 0;
+								if(personagem->corte.y != 48) personagem->corte.y = 48;
+								
+								if(personagem->rect.x >0){	
+									if(personagem->rect.x <=285 || personagem->rect.x > 360) personagem->rect.x -= 10;
+									else{
+										personagem->rect.x-=8; 
+										personagem->rect.y+=5;
+									}
+									personagem->state = walking;
 								}
-								personagem->state = walking;
+							}
+							else if(personagem->lugar == onBoat){
+								if(personagem->rect.x > 554 ){
+									if(personagem->corte.x < 144) personagem->corte.x +=48;
+									else personagem->corte.x = 0;
+									if(personagem->corte.y != 48) personagem->corte.y = 48;		
+										personagem->state = remando;
+										personagem->rect.x -= 4;
+										barco->rect.x -= 4;
+								}
 							}
 						break;
 						case SDLK_SPACE:
@@ -118,6 +154,23 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 							*menu = true;
 							*playing = false;
 							SDL_RenderPresent(ren);
+							break;
+						case SDLK_e:
+							if(personagem->rect.x >= barco->rect.x && personagem->lugar == onGround){
+								personagem->lugar = onBoat;
+								personagem->rect.y = 473;
+								personagem->rect.x = (barco->rect.w)/2 + barco->rect.x;
+								personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
+								personagem->corte.x = 0;
+
+							}
+							else if(personagem->rect.x <= 652 && personagem->lugar == onBoat){
+								personagem->lugar = onGround;	
+								personagem->rect.x =  632;
+								personagem->rect.y = 415;
+								personagem->corte.x = 0;
+								personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
+							}
 							break;
 						default:
 							SDL_FlushEvent(evt.type);
@@ -135,29 +188,33 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 			}
 			w.y = w.y + 1 * (var);
 			var *= -1;
-			personagem->state = idle;
-			if (personagem->corte.x < 240) personagem->corte.x +=48;
-			else personagem->corte.x = 0;
+			if(personagem->lugar == onGround){
+				personagem->state = idle;
+				if (personagem->corte.x < 240) personagem->corte.x +=48;
+				else personagem->corte.x = 0;
+			}
 			espera = 500;
 		}
 		if(fundoAux >= 9) fundoAux = 1;
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, *ceu, NULL, NULL);		
-		
 		SDL_RenderCopy(ren, cabana, &cH, &h);
-		SDL_RenderCopy(ren, agua, &cW, &w);
 		SDL_RenderCopy(ren, grama, &cG, &g);
 		SDL_RenderCopy(ren, listaDec[4], &cArv, &arvore);
-		
 		for(i = 0; i <= 3;i++){
 			SDL_RenderCopy(ren, listaDec[i], &cGD, &gDec);
 			gDec.x+=100;
 		} gDec.x = 0;
 		
-		if(personagem->state == idle) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
-		else personagem->texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
+		if(personagem->state == idle && personagem->lugar == onGround) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
+		else if(personagem->state == walking && personagem->lugar == onGround ) personagem->texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
+		else if(personagem->lugar == onBoat ) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
+		
+		
+		SDL_RenderCopy(ren, barco->texture, &barco->corte, &barco->rect);		
 		SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);
-			
+		SDL_RenderCopy(ren, agua, &cW, &w);
+		SDL_RenderCopy(ren, grama, &cG, &g);
 		switch(fundoAux){
 			case 1:
 				*ceu = IMG_LoadTexture(ren, "imgs/bg2.png");
@@ -349,6 +406,7 @@ int main (int argc, char* args[]){
     bool gameIsRunning = true;
     bool playing = false;
     bool menu = true;
+    dadosBarco barco;
     dadosPlayer player;
     //player.rect.x =0; player.rect.y = 460; player.rect.w= 100 ; player.rect.h =80;
     //player.corte.x =0; player.corte.y = 460; player.corte.w= 100 ; player.corte.h =80;
@@ -356,18 +414,25 @@ int main (int argc, char* args[]){
     player.corte = (SDL_Rect) { 0,0, 48,48 };
     //enum estado {idle = 0,walking,noBarco,remando,fishing};
     player.state = idle;
+    player.lugar = onGround;
     // player.state[1] = walking; player.state[2] = noBarco; player.state[3] = remando; player.state[4] = fishing;
 	player.texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
 	SDL_Texture* ceu = IMG_LoadTexture(ren, "imgs/bg7.png");
+	
+	barco.rect = (SDL_Rect) { 564,513, 148,36 };
+	barco.corte = (SDL_Rect) { 0,0, 74,18 };
+	barco.texture = IMG_LoadTexture(ren, "imgs/Boat.png");
+	
     /* EXECUÇÃO */
     while(gameIsRunning){
 		//while(menu) chamaMenu(SDL_Renderer* ren,bool* gameIsRunning,bool* playing){	
    		chamaMenu(ren,&menu,&gameIsRunning,&playing);
    		//while(playing) rodaJogo(ren,&menu,&gameIsRunning,&playing,&player,&ceu);
-   		rodaJogo(ren,&menu,&gameIsRunning,&playing,&player,&ceu);
+   		rodaJogo(ren,&menu,&gameIsRunning,&playing,&player,&ceu,&barco);
 	}
     /* FINALIZACAO */
   	SDL_DestroyTexture(player.texture);
+  	SDL_DestroyTexture(barco.texture);
   	SDL_DestroyTexture(ceu);
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);
