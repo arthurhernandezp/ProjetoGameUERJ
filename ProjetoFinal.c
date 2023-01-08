@@ -139,13 +139,14 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 							}
 						break;
 						case SDLK_LEFT:		
-							if(personagem->lugar == onGround){
+							if(personagem->lugar == onGround){		
 								if(personagem->corte.x < 240) personagem->corte.x +=48;
 								else personagem->corte.x = 0;
 								if(personagem->corte.y != 48) personagem->corte.y = 48;
 								
 								if(personagem->rect.x >0){	
-									if(personagem->rect.x <=285 || personagem->rect.x > 360) personagem->rect.x -= 7;
+									if((personagem->rect.x <=288 || personagem->rect.x > 360) &&
+									(personagem->rect.y == 460 || personagem->rect.y == 415)) personagem->rect.x -= 7;
 									else{
 										personagem->rect.x-=8; 
 										personagem->rect.y+=5;
@@ -257,7 +258,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, *ceu, NULL, NULL);		
 		SDL_RenderCopy(ren, cabana, NULL, &h);
-		SDL_RenderCopy(ren, grama, NULL, &g);
+		//SDL_RenderCopy(ren, grama, NULL, &g);
 		SDL_RenderCopy(ren, listaDec[4], &cArv, &arvore);
 		for(i = 0; i <= 3;i++){
 			SDL_RenderCopy(ren, listaDec[i], NULL, &gDec);
