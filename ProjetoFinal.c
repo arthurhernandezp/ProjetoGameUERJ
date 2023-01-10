@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <SDL2/SDL_ttf.h>
-#include <stdio.h>
+#include <string.h>
 #include <SDL2/SDL_mixer.h>
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 
@@ -38,8 +38,72 @@ typedef struct dadosMouse{
 	//state 0: cursor padrao do windows// state 1: cursor de pesca
 }dadosMouse;
 
-enum lugar {onGround = 0,onBoat};
-enum estado {idle = 0,walking,noBarco,remando,fishing};
+enum lugarPlayer {onGround = 0,onBoat};
+enum estadoPlayer {idle = 0,walking,noBarco,remando,fishing};
+
+typedef struct dadosItem{
+	SDL_Rect r;
+	bool state;
+	SDL_Texture* img;
+}dadosItem;
+
+typedef struct dadosInventario{
+    dadosItem matrizItens[6][2];
+	int n;//Numeros de itens inseridos
+	SDL_Texture* texture;
+	SDL_Rect rect;
+	unsigned short int state;//fechado/ aberto
+	short int i;
+	short int j;
+	
+}dadosInventario;
+
+enum stateInventario {fechado = 0,aberto};
+
+void constroi(SDL_Renderer *ren,dadosInventario* inv,int x,int y){
+	inv->n = 0;
+	int aux = x;
+	inv->rect = (SDL_Rect) {850,60,130,390};
+	inv->state = fechado;
+	inv-> i = 0;
+	inv -> j = 0;
+    inv->texture = IMG_LoadTexture(ren, "imgs/inv.png");
+	for(int i = 0; i<6;i++){
+		for(int j = 0;j<2;j++){
+			inv->matrizItens[i][j].img = NULL;
+		 	inv->matrizItens[i][j].state = false;
+		 	SDL_Rect recAux = {x,y,64,64};
+		 	inv->matrizItens[i][j].r = recAux;
+		 	x+=65;
+		}
+		x= aux;
+    	y+=65;
+    }
+}
+
+void chamaInventario(SDL_Renderer* ren, dadosInventario inv){
+	SDL_RenderCopy(ren, inv.texture, NULL, &inv.rect);
+	for(int x = 0; x<=5;x++){
+		for(int y = 0;y<=1;y++){
+			SDL_RenderCopy(ren, inv.matrizItens[x][y].img, NULL, &inv.matrizItens[x][y].r);
+		}
+	}
+
+}
+
+int buscaElemento(dadosInventario inv,int i, int j){
+	return inv.matrizItens[i][j].state;
+}
+
+int listaVazia(dadosInventario inv){
+	return inv.n == 0;
+}
+
+int listaCheia(dadosInventario inv){
+	return inv.n == 12;
+}
+
+
 
 void mudaCor(SDL_Renderer* ren,SDL_Surface* listaS[],SDL_Texture* listaT[],SDL_Color cor,int i,char* nome,TTF_Font *ourFont){
 	listaS[i] = TTF_RenderText_Solid(ourFont, nome,cor);  
@@ -55,7 +119,7 @@ int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms){
     } return 0;
 }
 
-void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dadosPlayer *personagem,SDL_Texture** ceu,dadosBarco *barco){
+void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dadosPlayer *personagem,SDL_Texture** ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[]){
 
 	int i = 0; int contFundo = 0;
 	dadosMouse mouse;
@@ -85,7 +149,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
     assert(grama != NULL);
     assert(cabana != NULL);
     
-    unsigned short int fundoAux = 0;
+    unsigned short int fundoAux = 5;
     int espera = 0;    
     SDL_Rect gDec = {0,507,32,33};
     SDL_Rect g = {0,536,484,64};
@@ -95,6 +159,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 	SDL_Rect cArv = (SDL_Rect) {89.6,0, 89.6,132 };
 	Uint32 antes = 0;
 	int var = 1;
+	int randAux = 0;
 	
 	while (*playing) {	
 		espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
@@ -192,6 +257,53 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 								personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
 							}
 							break;
+						case SDLK_i:
+							if(inventario->state == fechado) inventario->state = aberto;
+							else if(inventario->state == aberto) inventario->state = fechado;
+							break;
+						case SDLK_1:
+							if(inventario->state == aberto){
+								randAux = rand() % 7;	
+								if(!listaCheia(*inventario)){
+									if(	!buscaElemento(*inventario,inventario->i,inventario->j) ){
+										printf("[%d,%d]INSERINDO\n",inventario->i,inventario->j);
+										inventario->matrizItens[inventario->i][inventario->j].img = IMG_LoadTexture(ren, listaItens[randAux]);
+										inventario->matrizItens[inventario->i][inventario->j].state = true;
+										(inventario->n)++;
+										inventario->j++;
+
+										if(inventario->j >= 2 && inventario->i<5){
+										inventario->j = 0;
+										inventario->i++;
+										}
+									}
+									else{
+										printf("Existe um elemento na proxima posição!!!");
+									}
+								}
+								else{
+									printf("Lista Cheia!!!!\n");
+								}
+							}
+							break;
+						case SDLK_2:
+							if(inventario->state == aberto){
+								if(!listaVazia(*inventario)){
+									inventario->j--;
+									if(inventario->j < 0 && inventario->i>0){
+										inventario->j = 1;
+										inventario->i--;
+									}
+									inventario->matrizItens[inventario->i][inventario->j].img = NULL;
+									inventario->matrizItens[inventario->i][inventario->j].state = false;
+									(inventario->n)--;
+									printf("[%d,%d] DELETING\n",inventario->i,inventario->j);
+								}
+								else{
+									printf("Lista Vazia!!!!\n");
+								}
+							}
+							break;
 						default:
 							SDL_FlushEvent(evt.type);
 							break;
@@ -229,32 +341,35 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 		
 		switch(fundoAux){
 			case 1:
-				*ceu = IMG_LoadTexture(ren, "imgs/bg2.png");
-			break;
-			case 2: 
 				*ceu = IMG_LoadTexture(ren, "imgs/bg3.png");
 			break;
-			case 3:
+			case 2: 
 				*ceu = IMG_LoadTexture(ren, "imgs/bg4.png");
 			break;
-			case 4:
+			case 3:
 				*ceu = IMG_LoadTexture(ren, "imgs/bg5.png");
 			break;
-			case 5:
+			case 4:
 				*ceu = IMG_LoadTexture(ren, "imgs/bg6.png");
 			break;
-			case 6:
+			case 5:
 				*ceu = IMG_LoadTexture(ren, "imgs/bg7.png");
 			break;
-			case 7:
+			case 6:
 				*ceu = IMG_LoadTexture(ren, "imgs/bg8.png");
 			break;
+			case 7:
+				*ceu = IMG_LoadTexture(ren, "imgs/bg1.png");	
+			break;
 			case 8:
-				*ceu = IMG_LoadTexture(ren, "imgs/bg1.png");			
+				*ceu = IMG_LoadTexture(ren, "imgs/bg2.png");		
+			break;
+			default: 
+				fundoAux = 1;
 			break;
 		}
-	
-		if(fundoAux >= 9) fundoAux = 1;
+		
+		//if(fundoAux >= 9) fundoAux = 1;
 		SDL_RenderClear(ren);
 		SDL_RenderCopy(ren, *ceu, NULL, NULL);		
 		SDL_RenderCopy(ren, cabana, NULL, &h);
@@ -278,8 +393,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 		(personagem->rect.x > 554 && personagem->rect.x < 652 && personagem->lugar == onBoat ) ) {
 			SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
 		}	
-		
-
+		if(inventario->state == aberto) chamaInventario(ren,*inventario);
 		SDL_RenderPresent(ren);
 		
 	}	
@@ -441,23 +555,40 @@ int main (int argc, char* args[]){
     bool gameIsRunning = true;
     bool playing = false;
     bool menu = true; 
+    
     dadosPlayer player;
     player.rect = (SDL_Rect) {0,460,100,80};
     player.corte = (SDL_Rect) { 0,0, 48,48 };
     player.state = idle;
     player.lugar = onGround;
 	player.texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
+	
 	SDL_Texture* ceu = IMG_LoadTexture(ren, "imgs/bg7.png");
+	
+	
 	dadosBarco barco;
 	barco.rect = (SDL_Rect) { 564,513, 148,36 };
 	barco.texture = IMG_LoadTexture(ren, "imgs/Boat.png");
+	
+	dadosInventario inventario;
+    constroi(ren,&inventario,850,60);
+    
+    	
+	char * listaItens[7];
+	listaItens[0] = "imgs/Icons_04.png";
+	listaItens[1] = "imgs/Icons_05.png";
+	listaItens[2] = "imgs/Icons_06.png";
+	listaItens[3] = "imgs/Icons_07.png";
+	listaItens[4] = "imgs/Icons_08.png";
+	listaItens[5] = "imgs/Icons_09.png";
+	listaItens[6] = "imgs/Icons_10.png";
 	
     /* EXECUÇÃO */
     while(gameIsRunning){
 		//while(menu) chamaMenu(SDL_Renderer* ren,bool* gameIsRunning,bool* playing){	
    		chamaMenu(ren,&menu,&gameIsRunning,&playing);
    		//while(playing) rodaJogo(ren,&menu,&gameIsRunning,&playing,&player,&ceu);
-   		rodaJogo(ren,&menu,&gameIsRunning,&playing,&player,&ceu,&barco);
+   		rodaJogo(ren,&menu,&gameIsRunning,&playing,&player,&ceu,&barco,&inventario,listaItens);
 	}
     /* FINALIZACAO */
   	SDL_DestroyTexture(player.texture);
