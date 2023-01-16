@@ -65,7 +65,7 @@ typedef struct dadosInventario{
 }dadosInventario;
 
 enum stateInventario {fechado = 0,aberto};
-#include "inventario.c"
+enum tela {menu=0,jogo,fim};
 
 int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms){
     Uint32 antes = SDL_GetTicks();
@@ -101,6 +101,8 @@ SDL_Renderer* create_renderer(SDL_Window* win) {
 
     return ren;
 }
+
+#include "inventario.c"
 #include "game.c"
 #include "menu.c"
 
@@ -110,11 +112,7 @@ int main (int argc, char* args[]){
     IMG_Init(0);   
     SDL_Window* win = create_window();
     SDL_Renderer* ren = create_renderer(win);
-    bool selecionado = false;
-    bool gameIsRunning = true;
-    bool playing = false;
-    bool menu = true; 
-    
+    unsigned short int screen = menu;
     dadosPlayer player;
     player.rect = (SDL_Rect) {0,460,100,80};
     player.corte = (SDL_Rect) { 0,0, 48,48 };
@@ -143,13 +141,16 @@ int main (int argc, char* args[]){
 	listaItens[4] = "imgs/Icons_08.png";
 	listaItens[5] = "imgs/Icons_09.png";
 	listaItens[6] = "imgs/Icons_10.png";
+	
 	for(int i = 0;i < 7;i++) assert(listaItens[i] != NULL); 
     /* EXECUÇÃO */
-    while(gameIsRunning){
-		//while(menu) chamaMenu(SDL_Renderer* ren,bool* gameIsRunning,bool* playing){	
-   		chamaMenu(ren,&menu,&gameIsRunning,&playing);
-   		//while(playing) rodaJogo(ren,&menu,&gameIsRunning,&playing,&player,&ceu);
-   		rodaJogo(ren,&menu,&gameIsRunning,&playing,&player,&ceu,&barco,&inventario,listaItens);
+    while(screen != fim){
+    	switch (screen) {
+            case menu:
+                chamaMenu(ren,&screen);
+            case jogo:  
+                rodaJogo(ren,&player,&ceu,&barco,&inventario,listaItens,&screen);
+        } 
 	}
     /* FINALIZACAO */
   	SDL_DestroyTexture(player.texture);
