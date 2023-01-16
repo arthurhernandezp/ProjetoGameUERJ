@@ -1,4 +1,4 @@
-void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[]){
+void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],unsigned short int * screen){
 
 	int i = 0; int contFundo = 0;
 	dadosMouse mouse;
@@ -42,7 +42,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 	int var = 1;
 	int randAux = 0;
 	
-	while (*playing) {	
+	while (*screen == jogo) {	
 		espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 	  	SDL_Event evt; int isevt = AUX_WaitEventTimeoutCount(&evt,&espera);    
 	  	antes = SDL_GetTicks();
@@ -51,9 +51,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 			switch (evt.type) {
 				case SDL_WINDOWEVENT:
                 	if (SDL_WINDOWEVENT_CLOSE == evt.window.event){
-					    *playing = false;
-					    *menu = false;
-					    *gameIsRunning = false;
+					    *screen = fim;
 					} break;	
 				case SDL_KEYDOWN:
 					switch (evt.key.keysym.sym){  
@@ -115,11 +113,9 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 							(ceu->fundoAux)++;
 							break;
 						case SDLK_ESCAPE:
-							*menu = true;
-							*playing = false;
+							*screen = menu;
 							SDL_ShowCursor(true);
 							mouse.state = 0;
-							SDL_RenderPresent(ren);
 							break;
 						case SDLK_e:
 							if(personagem->rect.x >= barco->rect.x && personagem->lugar == onGround){
@@ -191,9 +187,9 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 		 		}
 		 		case SDL_MOUSEMOTION:
 		 			SDL_GetMouseState(&mouse.point.x,&mouse.point.y);
-		 			if(personagem->lugar == onBoat && SDL_PointInRect(&mouse.point,&w) && !*menu){
+		 			if(personagem->lugar == onBoat && SDL_PointInRect(&mouse.point,&w) && *screen == jogo){
 		 				mouse.state = 1;
-		 				mouse.rect.x = mouse.point.x;
+		 				mouse.rect.x = mouse.point.x - mouse.rect.w;
 		 				mouse.rect.y = mouse.point.y- mouse.rect.h;
 		 			}
 		 			else mouse.state = 0;
@@ -216,6 +212,7 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 			}
 			espera = 500;
 		}
+		//MUDA TEXTURA DO PLAYER
 		if(personagem->state == idle && personagem->lugar == onGround) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
 		else if(personagem->state == walking && personagem->lugar == onGround ) personagem->texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
 		else if(personagem->lugar == onBoat ) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
@@ -250,11 +247,11 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 			break;
 		}
 		
-		//if(fundoAux >= 9) fundoAux = 1;
+		
 		SDL_RenderClear(ren);
+		
 		SDL_RenderCopy(ren, ceu->texture, NULL, NULL);		
 		SDL_RenderCopy(ren, cabana, NULL, &h);
-		//SDL_RenderCopy(ren, grama, NULL, &g);
 		SDL_RenderCopy(ren, listaDec[4], &cArv, &arvore);
 		for(i = 0; i <= 3;i++){
 			SDL_RenderCopy(ren, listaDec[i], NULL, &gDec);
@@ -263,7 +260,9 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 		SDL_RenderCopy(ren, barco->texture, NULL, &barco->rect);		
 		SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);
 		SDL_RenderCopy(ren, agua, NULL, &w);
-		SDL_RenderCopy(ren, grama, NULL, &g);		
+		SDL_RenderCopy(ren, grama, NULL, &g);	
+		
+		//Muda textura do mouse	
 		if(mouse.state == 1){
 			SDL_ShowCursor(false);
 			SDL_RenderCopy(ren, mouse.texture, NULL, &mouse.rect);		
@@ -274,7 +273,9 @@ void rodaJogo(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing,dad
 		(personagem->rect.x > 554 && personagem->rect.x < 652 && personagem->lugar == onBoat ) ) {
 			SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
 		}	
+		
 		if(inventario->state == aberto) chamaInventario(ren,*inventario);
+		
 		SDL_RenderPresent(ren);
 		
 	}	
