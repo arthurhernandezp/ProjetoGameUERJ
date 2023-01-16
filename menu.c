@@ -3,7 +3,7 @@ void mudaCor(SDL_Renderer* ren,SDL_Surface* listaS[],SDL_Texture* listaT[],SDL_C
 	listaT[i] = SDL_CreateTextureFromSurface(ren,listaS[i]);
 }
 
-void chamaMenu(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
+void chamaMenu(SDL_Renderer* ren,unsigned short int * screen){
     TTF_Init();
     SDL_Color padrao = { 0,0,0,255 };
     SDL_Color focus = { 0,157,231,255 };
@@ -36,7 +36,7 @@ void chamaMenu(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
     Mix_Volume(1, 4);
     Mix_Music *backgroundSound = Mix_LoadMUS("menu.mp3");
     int count = 0;
-    while(*menu){
+    while(*screen == menu){
 			SDL_RenderCopy(ren, bgmenu, NULL, NULL);		
 			SDL_RenderCopy(ren,listaTextureText[0],NULL,&recNome);
 			SDL_RenderCopy(ren,listaTextureText[1],NULL,&recContinue);
@@ -46,9 +46,7 @@ void chamaMenu(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
 			while(SDL_PollEvent(&event)){
 				switch(event.type){
 					case SDL_QUIT:
-						*playing = false;
-						*gameIsRunning = false;
-						*menu = false;
+						*screen = fim;
 					break;
 					case SDL_MOUSEMOTION:
 							SDL_GetMouseState(&mouse.x,&mouse.y);
@@ -78,30 +76,22 @@ void chamaMenu(SDL_Renderer* ren,bool* menu,bool* gameIsRunning,bool* playing){
 						if(event.button.button==SDL_BUTTON_LEFT){
 							if(event.button.state==SDL_RELEASED){
 								if(SDL_PointInRect(&mouse,&recQuit) && selecionado) {						
-									*gameIsRunning = false;				
-									*menu = false;
-									*playing = false;
+							        *screen = fim;
 								}
 							}
 							else if(SDL_PointInRect(&mouse,&recContinue) && selecionado){
-									*menu = false;
-									*playing=  true;
+							        *screen = jogo;
 							}
 						}
 					break;
 					case SDL_KEYDOWN:	
 						switch (event.key.keysym.sym){  
 							case SDLK_ESCAPE:
-								*playing = true;
+								*screen = jogo;
 								break; 	
 						}
 					break;
 				}
-			}
-			if(*playing){
-				*menu = false;
-				SDL_RenderPresent(ren);
-				break;
 			}
 	}
 	
