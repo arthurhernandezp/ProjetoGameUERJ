@@ -123,7 +123,7 @@ int main (int argc, char* args[])
     int xAntes, yAntes;
     //Criação do primeiro inventario
     dadosInventario lista;
-    lista.texture = IMG_LoadTexture(ren, "inv.png");
+    lista.texture = IMG_LoadTexture(ren, "imgs/inv.png");
     constroi(&lista,250,100);
     
     SDL_Point mouse = {0,0};
@@ -199,7 +199,6 @@ int main (int argc, char* args[])
  		
 		chamaInventario(ren,lista);
 
-		printf("\npeixe.x: %d",rPeixe.x);
 		SDL_RenderCopy(ren, miniGameBG, NULL, &miniGame);
 		SDL_RenderCopy(ren, peixeMG, NULL, &rPeixe);
 		SDL_RenderCopy(ren, isca, NULL, &rIsca);
