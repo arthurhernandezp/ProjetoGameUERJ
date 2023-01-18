@@ -9,7 +9,12 @@
 #include <SDL2/SDL_mixer.h>
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 
-
+enum lugarPlayer {onGround = 0,onBoat};
+enum estadoPlayer {idle = 0,walking,noBarco,remando,fishing, pulling};
+enum stateInventario {fechado = 0,aberto};
+enum tela {menu=0,jogo,fim};
+enum states {ready=0,cancelled,clicked,dropped,dragging,clicking}; 
+enum minigame {cancelado = 0, emjogo, concluido};
 typedef struct dadosPlayer{
 	SDL_Rect rect;
 	SDL_Rect corte;
@@ -44,8 +49,9 @@ typedef struct dadosCeu{
 	unsigned short int fundoAux;
 }dadosCeu;
 
-enum lugarPlayer {onGround = 0,onBoat};
-enum estadoPlayer {idle = 0,walking,noBarco,remando,fishing};
+typedef struct dadosMinigame{
+	unsigned short int state;
+}dadosMinigame;
 
 typedef struct dadosItem{
 	SDL_Rect r;
@@ -64,8 +70,6 @@ typedef struct dadosInventario{
 	
 }dadosInventario;
 
-enum stateInventario {fechado = 0,aberto};
-enum tela {menu=0,jogo,fim};
 
 int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms){
     Uint32 antes = SDL_GetTicks();
