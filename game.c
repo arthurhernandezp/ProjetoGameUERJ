@@ -6,7 +6,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
     SDL_Rect rPeixe = { 655,425, 26,19 };
 	SDL_Texture* isca = IMG_LoadTexture(ren, "imgs/minigameIsca.png");
 	SDL_Texture* peixeMG = IMG_LoadTexture(ren, "imgs/minigamePeixe.png");
-	SDL_Texture* miniGameBG = IMG_LoadTexture(ren, "imgs/minigamepesca2.png");
+	SDL_Texture* miniGameBG = IMG_LoadTexture(ren, "imgs/minigamepesca.png");
 	SDL_Rect miniGame = { 620,380,308,66};
 	unsigned short int iscaSpeed = 5;
 	unsigned short int peixeSpeed = 0;
