@@ -1,19 +1,5 @@
-void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],unsigned short int * screen){
-	//MINIGAME 
-	dadosMinigame minigame;
-	minigame.state = cancelado;
-    SDL_Rect rIsca = { 774,357, 45,60 };
-    SDL_Rect rPeixe = { 655,425, 26,19 };
-	SDL_Texture* isca = IMG_LoadTexture(ren, "imgs/minigameIsca.png");
-	SDL_Texture* peixeMG = IMG_LoadTexture(ren, "imgs/minigamePeixe.png");
-	SDL_Texture* miniGameBG = IMG_LoadTexture(ren, "imgs/minigamepesca.png");
-	SDL_Rect miniGame = { 620,380,308,66};
-	unsigned short int iscaSpeed = 5;
-	unsigned short int peixeSpeed = 0;
+void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],unsigned short int * screen,dadosMinigame *minigame){
 	unsigned short int cur_state = 0;
-	
-	
-	//FIM DO MINIGAME
 	int i = 0; int contFundo = 0;
 	dadosMouse mouse;
 	mouse.rect.x = 0; mouse.rect.y = 0; mouse.rect.w = 30; mouse.rect.h = 50;
@@ -23,10 +9,14 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 	dadosBotao botao;
 	botao.rect = (SDL_Rect) {632,375,35,35};
 	botao.texture = IMG_LoadTexture(ren, "imgs/botao.png");
-	
+	SDL_Texture* inv2 = IMG_LoadTexture(ren, "imgs/balde.png");
     SDL_Texture* agua = IMG_LoadTexture(ren, "imgs/Water.png");
     SDL_Texture* grama = IMG_LoadTexture(ren, "imgs/grass.png");
 	SDL_Texture* cabana = IMG_LoadTexture(ren, "imgs/cabana.png");
+	
+	
+	SDL_Texture* avatar = IMG_LoadTexture(ren, "imgs/barco.png");
+	SDL_Rect avtRect = {20,20,180,75};
 	
 	struct SDL_Texture* listaDec[5];
 	listaDec[0] = IMG_LoadTexture(ren, "imgs/Grass1.png");
@@ -43,7 +33,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
     assert(cabana != NULL);
     assert(mouse.texture != NULL);
     assert(botao.texture != NULL);
-    
+    SDL_Rect inv2r = {600,0,350,405};
     unsigned short int fundoAux;
     int espera = 0;    
     SDL_Rect gDec = {0,507,32,33};
@@ -123,9 +113,6 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 								}
 							}
 						break;
-						case SDLK_SPACE:
-							(ceu->fundoAux)++;
-							break;
 						case SDLK_ESCAPE:
 							*screen = menu;
 							SDL_ShowCursor(true);
@@ -175,11 +162,11 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					if(evt.button.state==SDL_PRESSED) {
 					 	cur_state = clicking;
 					}
-                    if(personagem->state == pulling) iscaSpeed = rand()%5+10;
+                    if(personagem->state == pulling) minigame->iscaSpeed = rand()%5+10;
                 break;
                 case SDL_MOUSEBUTTONUP:
 				   if(cur_state == clicking) cur_state = clicked;
-				   if(personagem->state == pulling) iscaSpeed = rand()%5+12;
+				   if(personagem->state == pulling) minigame->iscaSpeed = rand()%5+12;
 				   break;
 			}
 		} else {   
@@ -210,38 +197,38 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 						randAux = rand() % 7;
 						switch(randAux){
 							case 0:
-								peixeSpeed = 1;
+								minigame->peixeSpeed = 1;
 							break;
 							case 1:
-								peixeSpeed = 2;
+								minigame->peixeSpeed = 2;
 							break;
 							case 2: 
-								peixeSpeed = 3;
+								minigame->peixeSpeed = 3;
 							break;
 							default:
-								peixeSpeed = 4;
+								minigame->peixeSpeed = 4;
 							break;
 						}
 					}
 				}
 				else if(personagem->state == pulling){
-					minigame.state = emjogo;
+					minigame->state = emjogo;
 					if(pescaAux == 5){
 						if(personagem->corte.x < 96) personagem->corte.x += 48;
 						else personagem->corte.x = 0;
 						pescaAux = 0;
 					}
 					if(cur_state == clicking){
-        				rIsca.x += iscaSpeed;
-						if(rIsca.x < rPeixe.x) rPeixe.x += peixeSpeed;
-						else rPeixe.x += 1;
+        				minigame->rIsca.x += minigame->iscaSpeed;
+						if(minigame->rIsca.x < minigame->rPeixe.x) minigame->rPeixe.x += minigame->peixeSpeed;
+						else minigame->rPeixe.x += 1;
         			}
 					if(cur_state == clicking){
-						rIsca.x += iscaSpeed;
-						if(rIsca.x < rPeixe.x) rPeixe.x += peixeSpeed;
-						else rPeixe.x += 1;
+						minigame->rIsca.x += minigame->iscaSpeed;
+						if(minigame->rIsca.x < minigame->rPeixe.x) minigame->rPeixe.x += minigame->peixeSpeed;
+						else minigame->rPeixe.x += 1;
 					}
-					else rIsca.x -= iscaSpeed;
+					else minigame->rIsca.x -= minigame->iscaSpeed;
 					espera = 100;
 					pescaAux++;
 				}
@@ -253,20 +240,20 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 			SDL_ShowCursor(true);
 		}
 		//trata minigame
-		if(personagem->state != pulling && minigame.state == emjogo){
-			minigame.state = cancelado;
+		if(personagem->state != pulling && minigame->state == emjogo){
+			minigame->state = cancelado;
 			personagem->state = remando;
 		}
 		else{
-			if(rPeixe.x >= 875){
-				minigame.state == cancelado;
+			if(minigame->rPeixe.x >= 875){
+				minigame->state == cancelado;
 				if(!listaCheia(*inventario)){
 					printf("[%d,%d]INSERINDO\n",inventario->i,inventario->j);
 					inventario->matrizItens[inventario->i][inventario->j].img =IMG_LoadTexture(ren, listaItens[randAux]); 
 					inventario->matrizItens[inventario->i][inventario->j].state = true;
 					(inventario->n)++;
 					inventario->j++;
-					if(inventario->j >= 2 && inventario->i<5){
+					if(inventario->j >= 3 && inventario->i<2){
 						inventario->j = 0;
 						inventario->i++;
 					}
@@ -274,14 +261,14 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 				else{
 					printf("Lista Cheia!!!!\n");
 				}
-				rPeixe.x = 655; 
-				rIsca.x = 774;
+				minigame->rPeixe.x = 655; 
+				minigame->rIsca.x = 774;
 				personagem->state = remando;
 			}
-			if(rIsca.x <= 620 || rIsca.x >= (928-rIsca.w)) {
-				rIsca.x = 774;
-				rPeixe.x = 655;
-				minigame.state = cancelado;
+			if(minigame->rIsca.x <= 620 || minigame->rIsca.x >= (928-minigame->rIsca.w)) {
+				minigame->rIsca.x = 774;
+				minigame->rPeixe.x = 655;
+				minigame->state = cancelado;
 				personagem->state = remando;
 			}
 		}
@@ -351,16 +338,12 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		}
 		
 		
-		
+		//SDL_RenderCopy(ren, inv2, NULL, &inv2r);		
 		SDL_RenderCopy(ren, agua, NULL, &w);
 		SDL_RenderCopy(ren, grama, NULL, &g);	
 		
 		//Muda textura do mouse	
-		if(mouse.state == 1){
-			SDL_ShowCursor(false);
-			SDL_RenderCopy(ren, mouse.texture, NULL, &mouse.rect);		
-		}
-		else if(mouse.state == 0) SDL_ShowCursor(true);
+		
 		
 		if( (personagem->rect.x >= barco->rect.x && personagem->lugar == onGround) ||
 		(personagem->rect.x > 554 && personagem->rect.x < 652 && personagem->lugar == onBoat ) && personagem->state !=pulling && personagem->state != fishing) {
@@ -368,11 +351,17 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		}	
 		
 		if(inventario->state == aberto) chamaInventario(ren,*inventario);
-		if(minigame.state == emjogo && personagem->state == pulling){
-			SDL_RenderCopy(ren, miniGameBG, NULL, &miniGame);
-			SDL_RenderCopy(ren, peixeMG, NULL, &rPeixe);
-			SDL_RenderCopy(ren, isca, NULL, &rIsca);
+		if(minigame->state == emjogo && personagem->state == pulling){
+			SDL_RenderCopy(ren, minigame->texture, NULL, &minigame->rect);
+			SDL_RenderCopy(ren, minigame->peixeMG, NULL, &minigame->rPeixe);
+			SDL_RenderCopy(ren, minigame->isca, NULL, &minigame->rIsca);
 		}
+		if(mouse.state == 1){
+			SDL_ShowCursor(false);
+			SDL_RenderCopy(ren, mouse.texture, NULL, &mouse.rect);		
+		}
+		else if(mouse.state == 0) SDL_ShowCursor(true);
+		SDL_RenderCopy(ren,avatar, NULL, &avtRect);
 		SDL_RenderPresent(ren);
 		
 	}	
