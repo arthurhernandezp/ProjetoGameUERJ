@@ -15,6 +15,19 @@ enum stateInventario {fechado = 0,aberto};
 enum tela {menu=0,jogo,fim};
 enum states {ready=0,cancelled,clicked,dropped,dragging,clicking}; 
 enum minigame {cancelado = 0, emjogo, concluido};
+
+typedef struct dadosMinigame{
+	SDL_Rect rIsca;
+	SDL_Rect rPeixe;
+	SDL_Rect rect;
+	SDL_Texture* texture;
+	SDL_Texture* peixeMG;
+	SDL_Texture* isca;
+	unsigned short int iscaSpeed;
+	unsigned short int peixeSpeed;
+	unsigned short int state;
+}dadosMinigame;
+
 typedef struct dadosPlayer{
 	SDL_Rect rect;
 	SDL_Rect corte;
@@ -49,10 +62,6 @@ typedef struct dadosCeu{
 	unsigned short int fundoAux;
 }dadosCeu;
 
-typedef struct dadosMinigame{
-	unsigned short int state;
-}dadosMinigame;
-
 typedef struct dadosItem{
 	SDL_Rect r;
 	bool state;
@@ -60,7 +69,7 @@ typedef struct dadosItem{
 }dadosItem;
 
 typedef struct dadosInventario{
-    dadosItem matrizItens[6][2];
+    dadosItem matrizItens[3][4];
 	short int n;//Numeros de itens inseridos
 	SDL_Texture* texture;
 	SDL_Rect rect;
@@ -134,9 +143,7 @@ int main (int argc, char* args[]){
 	barco.texture = IMG_LoadTexture(ren, "imgs/Boat.png");
 	assert(barco.texture != NULL); 
 	dadosInventario inventario;
-    constroi(ren,&inventario,850,60);
-    
-    	
+    constroi(ren,&inventario,690,150); 
 	char * listaItens[7];
 	listaItens[0] = "imgs/Icons_04.png";
 	listaItens[1] = "imgs/Icons_05.png";
@@ -145,15 +152,25 @@ int main (int argc, char* args[]){
 	listaItens[4] = "imgs/Icons_08.png";
 	listaItens[5] = "imgs/Icons_09.png";
 	listaItens[6] = "imgs/Icons_10.png";
-	
-	for(int i = 0;i < 7;i++) assert(listaItens[i] != NULL); 
+	for(int i = 0;i < 7;i++) assert(listaItens[i] != NULL);
+	//CRIA MINIGAME
+	dadosMinigame minigame;
+	minigame.state = cancelado;
+	minigame.rIsca = (SDL_Rect){ 774,357, 45,60 };
+    minigame.rPeixe = (SDL_Rect){ 655,425, 26,19 };
+	minigame.isca = IMG_LoadTexture(ren, "imgs/minigameIsca.png");
+	minigame.peixeMG = IMG_LoadTexture(ren, "imgs/minigamePeixe.png");
+	minigame.texture = IMG_LoadTexture(ren, "imgs/minigamepesca.png");
+	minigame.rect = (SDL_Rect){ 620,380,308,66};
+	minigame.iscaSpeed = 5;
+	minigame.peixeSpeed = 0;
     /* EXECUÇÃO */
     while(screen != fim){
     	switch (screen) {
             case menu:
                 chamaMenu(ren,&screen);
             case jogo:  
-                rodaJogo(ren,&player,&ceu,&barco,&inventario,listaItens,&screen);
+                rodaJogo(ren,&player,&ceu,&barco,&inventario,listaItens,&screen,&minigame);
         } 
 	}
     /* FINALIZACAO */
