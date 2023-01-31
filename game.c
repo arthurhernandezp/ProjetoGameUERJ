@@ -37,8 +37,8 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
     unsigned short int fundoAux;
     int espera = 0;    
     SDL_Rect gDec = {0,507,32,33};
-    SDL_Rect g = {0,536,484,64};
-    SDL_Rect w = {454,540,584,64};
+    SDL_Rect gramaRect = {0,536,484,64};
+    SDL_Rect aguaRect = {454,540,584,64};
     SDL_Rect h = {300,370,384,244};
     SDL_Rect arvore = {130,324,179.2,224};
 	SDL_Rect cArv = (SDL_Rect) {89.6,0, 89.6,132 };
@@ -86,6 +86,19 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 								}
 							}
 						break;
+						case SDLK_SPACE:
+							if(!listaCheia(*inventario)){
+								printf("[%d,%d]INSERINDO\n",inventario->i,inventario->j);
+								inventario->matrizItens[inventario->i][inventario->j].img =IMG_LoadTexture(ren, listaItens[randAux]); 
+								inventario->matrizItens[inventario->i][inventario->j].state = true;
+								(inventario->n)++;
+								inventario->j++;
+								if(inventario->j >= 4 && inventario->i<=3){
+									inventario->j = 0;
+									inventario->i++;
+								}
+							}
+							break;
 						case SDLK_LEFT:		
 							if(personagem->lugar == onGround){		
 								if(personagem->corte.x < 240) personagem->corte.x +=48;
@@ -145,7 +158,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		 		}
 		 		case SDL_MOUSEMOTION:
 		 			SDL_GetMouseState(&mouse.point.x,&mouse.point.y);
-		 			if(personagem->lugar == onBoat && SDL_PointInRect(&mouse.point,&w) && *screen == jogo || personagem->state == fishing || personagem->state == pulling){
+		 			if(personagem->lugar == onBoat && SDL_PointInRect(&mouse.point,&aguaRect) && *screen == jogo || personagem->state == fishing || personagem->state == pulling){
 		 				mouse.state = 1;
 		 				mouse.rect.x = mouse.point.x - mouse.rect.w;
 		 				mouse.rect.y = mouse.point.y- mouse.rect.h;
@@ -176,7 +189,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					(ceu->fundoAux)++;
 					contFundo = 0;
 				}
-				w.y = w.y + 1 * (var);
+				aguaRect.y = aguaRect.y + 1 * (var);
 				var *= -1;
 				espera = 500;
 			}
@@ -253,7 +266,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					inventario->matrizItens[inventario->i][inventario->j].state = true;
 					(inventario->n)++;
 					inventario->j++;
-					if(inventario->j >= 3 && inventario->i<2){
+					if(inventario->j >= 4 && inventario->i<3){
 						inventario->j = 0;
 						inventario->i++;
 					}
@@ -323,6 +336,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		SDL_RenderCopy(ren, ceu->texture, NULL, NULL);		
 		SDL_RenderCopy(ren, cabana, NULL, &h);
 		SDL_RenderCopy(ren, listaDec[4], &cArv, &arvore);
+		//Desenha grama decoração
 		for(i = 0; i <= 3;i++){
 			SDL_RenderCopy(ren, listaDec[i], NULL, &gDec);
 			gDec.x+=100;
@@ -337,12 +351,9 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 			SDL_RenderCopy(ren, barco->texture, NULL, &barco->rect);		
 		}
 		
+		SDL_RenderCopy(ren, agua, NULL, &aguaRect);
+		SDL_RenderCopy(ren, grama, NULL, &gramaRect);	
 		
-		//SDL_RenderCopy(ren, inv2, NULL, &inv2r);		
-		SDL_RenderCopy(ren, agua, NULL, &w);
-		SDL_RenderCopy(ren, grama, NULL, &g);	
-		
-		//Muda textura do mouse	
 		
 		
 		if( (personagem->rect.x >= barco->rect.x && personagem->lugar == onGround) ||
@@ -351,11 +362,14 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		}	
 		
 		if(inventario->state == aberto) chamaInventario(ren,*inventario);
+		
 		if(minigame->state == emjogo && personagem->state == pulling){
 			SDL_RenderCopy(ren, minigame->texture, NULL, &minigame->rect);
 			SDL_RenderCopy(ren, minigame->peixeMG, NULL, &minigame->rPeixe);
 			SDL_RenderCopy(ren, minigame->isca, NULL, &minigame->rIsca);
 		}
+		
+		//Muda textura do mouse	
 		if(mouse.state == 1){
 			SDL_ShowCursor(false);
 			SDL_RenderCopy(ren, mouse.texture, NULL, &mouse.rect);		
