@@ -20,7 +20,8 @@ void chamaMenu(SDL_Renderer* ren,unsigned short int * screen){
 	listaTextureText[1] = SDL_CreateTextureFromSurface(ren,listaSurfaceText[1]);
     listaTextureText[2] = SDL_CreateTextureFromSurface(ren,listaSurfaceText[2]);
     int i = 0;
-
+    int espera = 0;    
+	Uint32 antes = 0;
     bool selecionado = false;
     SDL_Point mouse = {0,0};
     SDL_Rect recNome = {350,130,300,150};
@@ -42,8 +43,10 @@ void chamaMenu(SDL_Renderer* ren,unsigned short int * screen){
 			SDL_RenderCopy(ren,listaTextureText[1],NULL,&recContinue);
 			SDL_RenderCopy(ren,listaTextureText[2],NULL,&recQuit);
 			SDL_RenderPresent(ren);
-			SDL_Event event;
-			while(SDL_PollEvent(&event)){
+			espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
+		  	SDL_Event event; int isevt = AUX_WaitEventTimeoutCount(&event,&espera);    
+		  	antes = SDL_GetTicks();
+		  	if(isevt){   
 				switch(event.type){
 					case SDL_QUIT:
 						*screen = fim;
@@ -82,13 +85,6 @@ void chamaMenu(SDL_Renderer* ren,unsigned short int * screen){
 							else if(SDL_PointInRect(&mouse,&recContinue) && selecionado){
 							        *screen = jogo;
 							}
-						}
-					break;
-					case SDL_KEYDOWN:	
-						switch (event.key.keysym.sym){  
-							case SDLK_ESCAPE:
-								*screen = jogo;
-								break; 	
 						}
 					break;
 				}
