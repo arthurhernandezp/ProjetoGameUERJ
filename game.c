@@ -10,8 +10,8 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 	botao.rect = (SDL_Rect) {632,375,35,35};
 	botao.texture = IMG_LoadTexture(ren, "imgs/botao.png");
 	SDL_Texture* inv2 = IMG_LoadTexture(ren, "imgs/balde.png");
-    SDL_Texture* agua = IMG_LoadTexture(ren, "imgs/Water.png");
-    SDL_Texture* grama = IMG_LoadTexture(ren, "imgs/grass.png");
+	SDL_Texture* agua = IMG_LoadTexture(ren, "imgs/Water.png");
+	SDL_Texture* grama = IMG_LoadTexture(ren, "imgs/grass.png");
 	SDL_Texture* cabana = IMG_LoadTexture(ren, "imgs/cabana.png");
 	
 	
@@ -28,19 +28,19 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 	for(i = 0; i <= 3; i++){
 		assert(listaDec[i] != NULL);
 	}
-    assert(agua != NULL);
-    assert(grama != NULL);
-    assert(cabana != NULL);
-    assert(mouse.texture != NULL);
-    assert(botao.texture != NULL);
-    SDL_Rect inv2r = {600,0,350,405};
-    unsigned short int fundoAux;
-    int espera = 0;    
-    SDL_Rect gDec = {0,507,32,33};
-    SDL_Rect gramaRect = {0,536,484,64};
-    SDL_Rect aguaRect = {454,540,584,64};
-    SDL_Rect h = {300,370,384,244};
-    SDL_Rect arvore = {130,324,179.2,224};
+	assert(agua != NULL);
+	assert(grama != NULL);
+	assert(cabana != NULL);
+	assert(mouse.texture != NULL);
+	assert(botao.texture != NULL);
+	SDL_Rect inv2r = {600,0,350,405};
+	unsigned short int fundoAux;
+	int espera = 0;    
+	SDL_Rect gDec = {0,507,32,33};
+	SDL_Rect gramaRect = {0,536,484,64};
+	SDL_Rect aguaRect = {454,540,584,64};
+	SDL_Rect h = {300,370,384,244};
+	SDL_Rect arvore = {130,324,179.2,224};
 	SDL_Rect cArv = (SDL_Rect) {89.6,0, 89.6,132 };
 	Uint32 antes = 0;
 	int var = 1;
