@@ -1,3 +1,4 @@
+//Função para mudar a cor do button
 void mudaCor(SDL_Renderer* ren,SDL_Surface* listaS[],SDL_Texture* listaT[],SDL_Color cor,int i,char* nome,TTF_Font *ourFont){
 	listaS[i] = TTF_RenderText_Solid(ourFont, nome,cor);  
 	listaT[i] = SDL_CreateTextureFromSurface(ren,listaS[i]);
@@ -10,11 +11,12 @@ void chamaMenu(SDL_Renderer* ren,unsigned short int * screen){
     char fonte[23] = "imgs/ArcadeClassic.ttf";
     TTF_Font *ourFont = TTF_OpenFont(fonte,40);
     SDL_Texture* bgmenu = IMG_LoadTexture(ren, "imgs/bgmenu.png");
+    
     struct SDL_Surface* listaSurfaceText[3];
     listaSurfaceText[0] = TTF_RenderText_Solid(ourFont, "Peixe IO",padrao);  
     listaSurfaceText[1] = TTF_RenderText_Solid(ourFont, "CoNTINUE",padrao); 
     listaSurfaceText[2] = TTF_RenderText_Solid(ourFont, "Quit",padrao); 
-     
+ 
     struct SDL_Texture* listaTextureText[3];
 	listaTextureText[0] = SDL_CreateTextureFromSurface(ren,listaSurfaceText[0]);
 	listaTextureText[1] = SDL_CreateTextureFromSurface(ren,listaSurfaceText[1]);
@@ -38,57 +40,59 @@ void chamaMenu(SDL_Renderer* ren,unsigned short int * screen){
     Mix_Music *backgroundSound = Mix_LoadMUS("menu.mp3");
     int count = 0;
     while(*screen == menu){
-			SDL_RenderCopy(ren, bgmenu, NULL, NULL);		
-			SDL_RenderCopy(ren,listaTextureText[0],NULL,&recNome);
-			SDL_RenderCopy(ren,listaTextureText[1],NULL,&recContinue);
-			SDL_RenderCopy(ren,listaTextureText[2],NULL,&recQuit);
-			SDL_RenderPresent(ren);
-			espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
-		  	SDL_Event event; int isevt = AUX_WaitEventTimeoutCount(&event,&espera);    
-		  	antes = SDL_GetTicks();
-		  	if(isevt){   
-				switch(event.type){
-					case SDL_QUIT:
-						*screen = fim;
-					break;
-					case SDL_MOUSEMOTION:
-							SDL_GetMouseState(&mouse.x,&mouse.y);
-						   	if(SDL_PointInRect(&mouse,&recContinue)){
-						   		mudaCor(ren,listaSurfaceText,listaTextureText,focus,1,"Continue",ourFont);
-   		                     	if (count < 1) Mix_PlayMusic(backgroundSound, 1);
-   		                     	if(count <= 1) count++;
-						   	}
-						   	else if(SDL_PointInRect(&mouse,&recQuit)){
-						   		mudaCor(ren,listaSurfaceText,listaTextureText,focus,2,"Quit",ourFont);
-	   		                     if (count < 1) Mix_PlayMusic(backgroundSound, 1);
-	   		                     if(count <= 1) count++;   		                     	
-						   	}
-						   	else{
-						   		mudaCor(ren,listaSurfaceText,listaTextureText,padrao,1,"Continue",ourFont);
-						   		mudaCor(ren,listaSurfaceText,listaTextureText,padrao,2,"Quit",ourFont);
-								selecionado = false;
-								count = 0;
-						   	}
-					break;
-					case SDL_MOUSEBUTTONDOWN:	
-						if(event.button.button==SDL_BUTTON_LEFT){
-							if(SDL_PointInRect(&mouse,&recQuit)) selecionado = true;
-							else if (SDL_PointInRect(&mouse,&recContinue)) selecionado = true;
-						}
-					case SDL_MOUSEBUTTONUP:	
-						if(event.button.button==SDL_BUTTON_LEFT){
-							if(event.button.state==SDL_RELEASED){
-								if(SDL_PointInRect(&mouse,&recQuit) && selecionado) {						
-							        *screen = fim;
-								}
-							}
-							else if(SDL_PointInRect(&mouse,&recContinue) && selecionado){
-							        *screen = jogo;
+    	//desenha o menu	
+		SDL_RenderCopy(ren, bgmenu, NULL, NULL);		
+		SDL_RenderCopy(ren,listaTextureText[0],NULL,&recNome);
+		SDL_RenderCopy(ren,listaTextureText[1],NULL,&recContinue);
+		SDL_RenderCopy(ren,listaTextureText[2],NULL,&recQuit);
+		SDL_RenderPresent(ren);
+		espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
+	  	SDL_Event event; int isevt = AUX_WaitEventTimeoutCount(&event,&espera);    
+	  	antes = SDL_GetTicks();
+	  	if(isevt){   
+			switch(event.type){
+				case SDL_QUIT:
+					*screen = fim;
+				break;
+				case SDL_MOUSEMOTION:
+						//muda a cor do button se o mouse passar por cima
+						SDL_GetMouseState(&mouse.x,&mouse.y);
+					   	if(SDL_PointInRect(&mouse,&recContinue)){
+					   		mudaCor(ren,listaSurfaceText,listaTextureText,focus,1,"Continue",ourFont);
+	                     	if (count < 1) Mix_PlayMusic(backgroundSound, 1);//Liga o som 
+	                     	if(count <= 1) count++;
+					   	}
+					   	else if(SDL_PointInRect(&mouse,&recQuit)){
+					   		mudaCor(ren,listaSurfaceText,listaTextureText,focus,2,"Quit",ourFont);
+   		                     if (count < 1) Mix_PlayMusic(backgroundSound, 1);//Liga o som 
+   		                     if(count <= 1) count++;   		                     	
+					   	}
+					   	else{
+					   		mudaCor(ren,listaSurfaceText,listaTextureText,padrao,1,"Continue",ourFont);
+					   		mudaCor(ren,listaSurfaceText,listaTextureText,padrao,2,"Quit",ourFont);
+							selecionado = false;
+							count = 0;
+					   	}
+				break;
+				case SDL_MOUSEBUTTONDOWN:	
+					if(event.button.button==SDL_BUTTON_LEFT){
+						if(SDL_PointInRect(&mouse,&recQuit)) selecionado = true;
+						else if (SDL_PointInRect(&mouse,&recContinue)) selecionado = true;
+					}
+				case SDL_MOUSEBUTTONUP:	
+					if(event.button.button==SDL_BUTTON_LEFT){
+						if(event.button.state==SDL_RELEASED){
+							if(SDL_PointInRect(&mouse,&recQuit) && selecionado) {						
+						        *screen = fim;
 							}
 						}
-					break;
-				}
+						else if(SDL_PointInRect(&mouse,&recContinue) && selecionado){
+						        *screen = jogo;
+						}
+					}
+				break;
 			}
+		}
 	}
 	
     for(i = 0; i <= 2;i++){

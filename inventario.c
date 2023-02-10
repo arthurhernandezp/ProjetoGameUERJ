@@ -40,3 +40,4 @@ int listaVazia(dadosInventario inv){
 int listaCheia(dadosInventario inv){
 	return inv.n == 12;
 }
+

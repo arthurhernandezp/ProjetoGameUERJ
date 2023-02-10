@@ -10,11 +10,11 @@
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 
 enum lugarPlayer {onGround = 0,onBoat};
-enum estadoPlayer {idle = 0,walking,noBarco,remando,fishing, pulling};
-enum stateInventario {fechado = 0,aberto};
-enum tela {menu=0,jogo,fim};
-enum states {ready=0,cancelled,clicked,dropped,dragging,clicking}; 
-enum minigame {cancelado = 0, emjogo, concluido};
+enum playerStates {idle = 0,walking,noBarco,remando,fishing, pulling};
+enum inventarioStates {fechado = 0,aberto};
+enum telaStates {menu=0,jogo,fim};
+enum mouseStates {ready=0,cancelled,clicked,dropped,dragging,clicking}; 
+enum minigameState {cancelado = 0, emjogo, concluido};
 
 typedef struct dadosMinigame{
 	SDL_Rect rIsca;

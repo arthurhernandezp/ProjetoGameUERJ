@@ -1,3 +1,22 @@
+void mudaTextura(SDL_Renderer* ren,dadosPlayer *personagem){
+	if(personagem->state == idle && personagem->lugar == onGround) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
+	else if(personagem->state == walking && personagem->lugar == onGround ){
+		 personagem->texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
+	}
+	else if(personagem->lugar == onBoat && personagem->state == remando) {
+		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
+		personagem->rect.y = 473;
+	}
+	else if(personagem->lugar == onBoat && personagem->state == fishing){
+		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_fish.png");
+		personagem->rect.y = 467;
+		personagem->corte.y = 0;
+	}
+	else if(personagem->lugar == onBoat && personagem->state == pulling){
+		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_hook.png");
+	}
+}
+
 void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],unsigned short int * screen,dadosMinigame *minigame){
 	unsigned short int cur_state = 0;
 	int i = 0; int contFundo = 0;
@@ -10,8 +29,8 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 	botao.rect = (SDL_Rect) {632,375,35,35};
 	botao.texture = IMG_LoadTexture(ren, "imgs/botao.png");
 	SDL_Texture* inv2 = IMG_LoadTexture(ren, "imgs/balde.png");
-	SDL_Texture* agua = IMG_LoadTexture(ren, "imgs/Water.png");
-	SDL_Texture* grama = IMG_LoadTexture(ren, "imgs/grass.png");
+    SDL_Texture* agua = IMG_LoadTexture(ren, "imgs/Water.png");
+    SDL_Texture* grama = IMG_LoadTexture(ren, "imgs/grass.png");
 	SDL_Texture* cabana = IMG_LoadTexture(ren, "imgs/cabana.png");
 	
 	
@@ -28,19 +47,19 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 	for(i = 0; i <= 3; i++){
 		assert(listaDec[i] != NULL);
 	}
-	assert(agua != NULL);
-	assert(grama != NULL);
-	assert(cabana != NULL);
-	assert(mouse.texture != NULL);
-	assert(botao.texture != NULL);
-	SDL_Rect inv2r = {600,0,350,405};
-	unsigned short int fundoAux;
-	int espera = 0;    
-	SDL_Rect gDec = {0,507,32,33};
-	SDL_Rect gramaRect = {0,536,484,64};
-	SDL_Rect aguaRect = {454,540,584,64};
-	SDL_Rect h = {300,370,384,244};
-	SDL_Rect arvore = {130,324,179.2,224};
+    assert(agua != NULL);
+    assert(grama != NULL);
+    assert(cabana != NULL);
+    assert(mouse.texture != NULL);
+    assert(botao.texture != NULL);
+    SDL_Rect inv2r = {600,0,350,405};
+    unsigned short int fundoAux;
+    int espera = 0;    
+    SDL_Rect gDec = {0,507,32,33};
+    SDL_Rect gramaRect = {0,536,484,64};
+    SDL_Rect aguaRect = {454,540,584,64};
+    SDL_Rect h = {300,370,384,244};
+    SDL_Rect arvore = {130,324,179.2,224};
 	SDL_Rect cArv = (SDL_Rect) {89.6,0, 89.6,132 };
 	Uint32 antes = 0;
 	int var = 1;
@@ -62,12 +81,14 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 						case SDLK_RIGHT:
 							if(personagem->lugar == onGround){
 								if(personagem->rect.x < 625){
+									//Movimenta o corte na imagem a cada comando e garante que sempre vai estar na parte de cima da imagem quando for pra direita
 									if(personagem->corte.x < 240) personagem->corte.x += 48;
 									else personagem->corte.x = 0;
 									if(personagem->corte.y != 0) personagem->corte.y = 0;
 									
+									//O personagem ande em qualquer lugar diferente da escada
 									if(personagem->rect.x < 280 || personagem->rect.y <= 417) personagem->rect.x += 7;
-									else if (personagem->rect.x >= 280 && personagem->rect.y > 417){
+									else if (personagem->rect.x >= 280 && personagem->rect.y > 417){//Personagem começa a subir a escada
 										personagem->rect.x+=8; 
 										personagem->rect.y-=5;
 									} 
@@ -77,6 +98,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							else if(personagem->lugar == onBoat){
 								
 								if(personagem->rect.x < 852){
+									//Movimenta o corte na imagem a cada comando e garante que sempre vai estar na parte de cima da imagem quando for pra direita
 									if(personagem->corte.x < 144) personagem->corte.x += 48;
 									else personagem->corte.x = 0;
 									if(personagem->corte.y != 0) personagem->corte.y = 0;
@@ -86,29 +108,18 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 								}
 							}
 						break;
-						case SDLK_SPACE:
-							if(!listaCheia(*inventario)){
-								printf("[%d,%d]INSERINDO\n",inventario->i,inventario->j);
-								inventario->matrizItens[inventario->i][inventario->j].img =IMG_LoadTexture(ren, listaItens[randAux]); 
-								inventario->matrizItens[inventario->i][inventario->j].state = true;
-								(inventario->n)++;
-								inventario->j++;
-								if(inventario->j >= 4 && inventario->i<=3){
-									inventario->j = 0;
-									inventario->i++;
-								}
-							}
-							break;
 						case SDLK_LEFT:		
 							if(personagem->lugar == onGround){		
+								//Movimenta o corte na imagem a cada comando e garante que sempre vai estar na parte de cima da imagem quando for pra esquerda
 								if(personagem->corte.x < 240) personagem->corte.x +=48;
 								else personagem->corte.x = 0;
 								if(personagem->corte.y != 48) personagem->corte.y = 48;
 								
 								if(personagem->rect.x >0){	
+									//If para garantir que o personagem ande em qualquer lugar diferente da escada
 									if((personagem->rect.x <=288 || personagem->rect.x > 360) &&
 									(personagem->rect.y == 460 || personagem->rect.y == 415)) personagem->rect.x -= 7;
-									else{
+									else{//Personagem começa a descer a escada
 										personagem->rect.x-=8; 
 										personagem->rect.y+=5;
 									}
@@ -117,41 +128,16 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							}
 							else if(personagem->lugar == onBoat){
 								if(personagem->rect.x > 554 ){
+									//Movimenta o corte na imagem a cada comando e garante que sempre vai estar na parte de cima da imagem quando for pra esquerda
 									if(personagem->corte.x < 144) personagem->corte.x +=48;
 									else personagem->corte.x = 0;
 									if(personagem->corte.y != 48) personagem->corte.y = 48;		
-										personagem->state = remando;
-										personagem->rect.x -= 4;
-										barco->rect.x -= 4;
+									personagem->rect.x -= 4;
+									barco->rect.x -= 4;
+									personagem->state = remando;
 								}
 							}
 						break;
-						case SDLK_ESCAPE:
-							*screen = menu;
-							SDL_ShowCursor(true);
-							mouse.state = 0;
-							break;
-						case SDLK_e:
-							if(personagem->rect.x >= barco->rect.x && personagem->lugar == onGround){
-								personagem->lugar = onBoat;
-								personagem->rect.y = 473;
-								personagem->rect.x = (barco->rect.w)/2 + barco->rect.x;
-								personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
-								personagem->corte.x = 0;
-
-							}
-							else if(personagem->rect.x <= 652 && personagem->lugar == onBoat){
-								personagem->lugar = onGround;	
-								personagem->rect.x =  632;
-								personagem->rect.y = 415;
-								personagem->corte.x = 0;
-								personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
-							}
-							break;
-						case SDLK_i:
-							if(inventario->state == fechado) inventario->state = aberto;
-							else if(inventario->state == aberto) inventario->state = fechado;
-							break;
 						default:
 							SDL_FlushEvent(evt.type);
 							break;
@@ -182,6 +168,38 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 				   if(personagem->state == pulling) minigame->iscaSpeed = rand()%5+12;
 				   break;
 			}
+			if(evt.type == SDL_KEYUP){
+		 			if(evt.key.keysym.sym == SDLK_RIGHT || evt.key.keysym.sym == SDLK_LEFT && personagem->lugar == onGround){
+		 				 personagem->state = idle;
+		 			}
+		 			else if(evt.key.keysym.sym == SDLK_e){
+			 			if(personagem->rect.x >= barco->rect.x && personagem->lugar == onGround){
+									personagem->lugar = onBoat;
+									personagem->rect.y = 473;
+									personagem->rect.x = (barco->rect.w)/2 + barco->rect.x;
+									personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
+									personagem->corte.x = 0;
+
+						}
+						else if(personagem->rect.x <= 652 && personagem->lugar == onBoat){
+							personagem->lugar = onGround;	
+							personagem->rect.x =  632;
+							personagem->rect.y = 415;
+							personagem->corte.x = 0;
+							personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
+						}
+		 			}
+		 			else if(evt.key.keysym.sym == SDLK_i){
+		 				if(inventario->state == fechado) inventario->state = aberto;
+						else if(inventario->state == aberto) inventario->state = fechado;
+		 			}
+		 			else if(evt.key.keysym.sym == SDLK_ESCAPE){
+							*screen = menu;
+							SDL_ShowCursor(true);
+							mouse.state = 0;
+					}
+		 			break;
+			}
 		} else {   
 			if(personagem->state != pulling){
 	  			contFundo += 1;
@@ -194,7 +212,6 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 				espera = 500;
 			}
 			if(personagem->lugar == onGround){
-				personagem->state = idle;
 				if (personagem->corte.x < 240) personagem->corte.x +=48;
 				else personagem->corte.x = 0;
 			}
@@ -247,7 +264,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 				}
 			}
 		}
-		
+		//trata a passagem de tela do jogo para o menu ativando o cursor windowns novamente
 		if(*screen == menu) {
 			mouse.state = 0;
 			SDL_ShowCursor(true);
@@ -285,22 +302,10 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 				personagem->state = remando;
 			}
 		}
-		
-		//MUDA TEXTURA DO PLAYER
-		if(personagem->state == idle && personagem->lugar == onGround) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
-		else if(personagem->state == walking && personagem->lugar == onGround ) personagem->texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
-		else if(personagem->lugar == onBoat && personagem->state == remando) {
-			personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
-			personagem->rect.y = 473;
-		}
-		else if(personagem->lugar == onBoat && personagem->state == fishing){
-			personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_fish.png");
-			personagem->rect.y = 467;
-			personagem->corte.y = 0;
-		}
-		else if(personagem->lugar == onBoat && personagem->state == pulling){
-			personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_hook.png");
-		}
+
+		mudaTextura(ren,personagem);
+
+		//Switch para controlar a mudança do fundo de tela
 		switch(ceu->fundoAux){
 			case 1:
 				ceu->texture = IMG_LoadTexture(ren, "imgs/bg3.png");
@@ -330,7 +335,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 				ceu->fundoAux = 1;
 			break;
 		}
-		
+
 		SDL_RenderClear(ren);
 		
 		SDL_RenderCopy(ren, ceu->texture, NULL, NULL);		
@@ -349,26 +354,22 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		else{
 			SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);
 			SDL_RenderCopy(ren, barco->texture, NULL, &barco->rect);		
-		}
-		
+		}	
 		SDL_RenderCopy(ren, agua, NULL, &aguaRect);
-		SDL_RenderCopy(ren, grama, NULL, &gramaRect);	
-		
-		
-		
+		SDL_RenderCopy(ren, grama, NULL, &gramaRect);		
+		//Desenha o botao "E"
 		if( (personagem->rect.x >= barco->rect.x && personagem->lugar == onGround) ||
 		(personagem->rect.x > 554 && personagem->rect.x < 652 && personagem->lugar == onBoat ) && personagem->state !=pulling && personagem->state != fishing) {
 			SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
 		}	
-		
+		//Desenha o inventario
 		if(inventario->state == aberto) chamaInventario(ren,*inventario);
-		
+		//Desenha o minigame
 		if(minigame->state == emjogo && personagem->state == pulling){
 			SDL_RenderCopy(ren, minigame->texture, NULL, &minigame->rect);
 			SDL_RenderCopy(ren, minigame->peixeMG, NULL, &minigame->rPeixe);
 			SDL_RenderCopy(ren, minigame->isca, NULL, &minigame->rIsca);
-		}
-		
+		}	
 		//Muda textura do mouse	
 		if(mouse.state == 1){
 			SDL_ShowCursor(false);
@@ -376,16 +377,12 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		}
 		else if(mouse.state == 0) SDL_ShowCursor(true);
 		SDL_RenderCopy(ren,avatar, NULL, &avtRect);
-		SDL_RenderPresent(ren);
-		
-	}	
-	
+		SDL_RenderPresent(ren);	
+	}		
 	SDL_DestroyTexture(agua);
 	SDL_DestroyTexture(grama);
 	SDL_DestroyTexture(cabana);
 	SDL_DestroyTexture(mouse.texture);
 	SDL_DestroyTexture(botao.texture);
-	for(i = 0; i < 4; i++)
-		SDL_DestroyTexture(listaDec[i]);
-	
+	for(i = 0; i < 4; i++) SDL_DestroyTexture(listaDec[i]);	
 }
