@@ -204,6 +204,9 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							SDL_ShowCursor(true);
 							mouse.state = 0;
 					}
+					else{
+						if(personagem->state == walking) personagem->state = idle;
+					}
 		 			break;
 			}
 		} else {   
@@ -342,7 +345,6 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 				ceu->fundoAux = 1;
 			break;
 		}
-
 		SDL_RenderClear(ren);
 		
 		SDL_RenderCopy(ren, ceu->texture, NULL, NULL);		
