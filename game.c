@@ -33,7 +33,12 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
     SDL_Texture* grama = IMG_LoadTexture(ren, "imgs/grass.png");
 	SDL_Texture* cabana = IMG_LoadTexture(ren, "imgs/cabana.png");
 	
-	
+	dadosVendedor vendedor;
+	vendedor.texture = IMG_LoadTexture(ren, "imgs/market.png");
+	vendedor.dialogo = IMG_LoadTexture(ren, "imgs/Dialogo1.png");
+	vendedor.dialogoRect =  (SDL_Rect) {30,200,381,134};
+	vendedor.rect =  (SDL_Rect) {10,446,110,92};
+
 	SDL_Texture* avatar = IMG_LoadTexture(ren, "imgs/barco.png");
 	SDL_Rect avtRect = {20,20,180,75};
 	
@@ -139,6 +144,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							}
 						break;
 						default:
+							if(personagem->state == walking) personagem->state = idle;
 							SDL_FlushEvent(evt.type);
 							break;
 		 		}
@@ -269,6 +275,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 			mouse.state = 0;
 			SDL_ShowCursor(true);
 		}
+		
 		//trata minigame
 		if(personagem->state != pulling && minigame->state == emjogo){
 			minigame->state = cancelado;
@@ -346,7 +353,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 			SDL_RenderCopy(ren, listaDec[i], NULL, &gDec);
 			gDec.x+=100;
 		} gDec.x = 0;	
-		
+		SDL_RenderCopy(ren,vendedor.texture, NULL, &vendedor.rect);
 		if(personagem->state != fishing && personagem->state != pulling){
 			SDL_RenderCopy(ren, barco->texture, NULL, &barco->rect);		
 			SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);
@@ -360,8 +367,20 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		//Desenha o botao "E"
 		if( (personagem->rect.x >= barco->rect.x && personagem->lugar == onGround) ||
 		(personagem->rect.x > 554 && personagem->rect.x < 652 && personagem->lugar == onBoat ) && personagem->state !=pulling && personagem->state != fishing) {
+			botao.rect.x =632;
+			botao.rect.y = 375;
 			SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
 		}	
+		//DESENHA BOTAO E DIALOGO DO VENDEDOR
+		if(SDL_HasIntersection(&vendedor.rect, &personagem->rect)) {
+			if(listaCheia(*inventario)){
+				vendedor.dialogo = IMG_LoadTexture(ren, "imgs/Dialogo2.png");
+				botao.rect.x = 50;
+				botao.rect.y = 400;
+				SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
+			}
+			SDL_RenderCopy(ren, vendedor.dialogo, NULL, &vendedor.dialogoRect);
+		}
 		//Desenha o inventario
 		if(inventario->state == aberto) chamaInventario(ren,*inventario);
 		//Desenha o minigame

@@ -15,7 +15,7 @@ enum inventarioStates {fechado = 0,aberto};
 enum telaStates {menu=0,jogo,fim};
 enum mouseStates {ready=0,cancelled,clicked,dropped,dragging,clicking}; 
 enum minigameState {cancelado = 0, emjogo, concluido};
-
+enum dialogoState {off = 0,on};
 typedef struct dadosMinigame{
 	SDL_Rect rIsca;
 	SDL_Rect rPeixe;
@@ -27,6 +27,14 @@ typedef struct dadosMinigame{
 	unsigned short int peixeSpeed;
 	unsigned short int state;
 }dadosMinigame;
+
+
+typedef struct dadosVendedor{
+	SDL_Rect rect;
+	SDL_Texture *texture;
+	SDL_Rect dialogoRect;
+	SDL_Texture *dialogo;
+}dadosVendedor;
 
 typedef struct dadosPlayer{
 	SDL_Rect rect;
