@@ -83,6 +83,8 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					} break;	
 				case SDL_KEYDOWN:
 					switch (evt.key.keysym.sym){  
+						case SDLK_SPACE:
+							*screen =  telaFinal;
 						case SDLK_RIGHT:
 							if(personagem->lugar == onGround){
 								if(personagem->rect.x < 625){
@@ -193,6 +195,9 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							personagem->rect.y = 415;
 							personagem->corte.x = 0;
 							personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
+						}
+						else if(SDL_HasIntersection(&vendedor.rect, &personagem->rect) && listaCheia(*inventario)){
+							*screen = telaFinal;
 						}
 		 			}
 		 			else if(evt.key.keysym.sym == SDLK_i){
@@ -405,5 +410,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 	SDL_DestroyTexture(cabana);
 	SDL_DestroyTexture(mouse.texture);
 	SDL_DestroyTexture(botao.texture);
+	SDL_DestroyTexture(vendedor.texture);
+	SDL_DestroyTexture(vendedor.dialogo);
 	for(i = 0; i < 4; i++) SDL_DestroyTexture(listaDec[i]);	
 }

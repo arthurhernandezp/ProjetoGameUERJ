@@ -12,7 +12,7 @@
 enum lugarPlayer {onGround = 0,onBoat};
 enum playerStates {idle = 0,walking,noBarco,remando,fishing, pulling};
 enum inventarioStates {fechado = 0,aberto};
-enum telaStates {menu=0,jogo,fim};
+enum telaStates {menu=0,jogo,telaFinal,fim};
 enum mouseStates {ready=0,cancelled,clicked,dropped,dragging,clicking}; 
 enum minigameState {cancelado = 0, emjogo, concluido};
 enum dialogoState {off = 0,on};
@@ -126,7 +126,7 @@ SDL_Renderer* create_renderer(SDL_Window* win) {
 #include "inventario.c"
 #include "game.c"
 #include "menu.c"
-
+#include "telaFinal.c"
 int main (int argc, char* args[]){
     /* INICIALIZACAO */
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -179,6 +179,8 @@ int main (int argc, char* args[]){
                 chamaMenu(ren,&screen);
             case jogo:  
                 rodaJogo(ren,&player,&ceu,&barco,&inventario,listaItens,&screen,&minigame);
+            case telaFinal:
+            	rodaTelaFinal(ren,&player,&barco,&ceu,&screen);
         } 
 	}
     /* FINALIZACAO */
