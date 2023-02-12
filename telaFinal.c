@@ -16,7 +16,7 @@ void rodaTelaFinal(SDL_Renderer* ren,dadosPlayer *personagem,dadosBarco *barco,d
 		SDL_Texture* agua = IMG_LoadTexture(ren, "imgs/Water.png");
 		personagem->corte.y = personagem->corte.x = 0;
 		
-		SDL_Surface* textoSur = TTF_RenderText_Solid(ourFont, "Aperte   ESC    para sair",padrao);
+		SDL_Surface* textoSur = TTF_RenderText_Solid(ourFont, "Aperte    ESC     para    sair",padrao);
 		SDL_Texture* textoTex = SDL_CreateTextureFromSurface(ren,textoSur);
 		SDL_Rect textoRect = {300,-100,600,200};
 		SDL_FreeSurface(textoSur);
@@ -25,20 +25,18 @@ void rodaTelaFinal(SDL_Renderer* ren,dadosPlayer *personagem,dadosBarco *barco,d
 		while(*screen == telaFinal){
 			espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 		  	SDL_Event evento; int isevt = AUX_WaitEventTimeoutCount(&evento,&espera);    
-		  	antes = SDL_GetTicks();
-  			SDL_RenderClear(ren);
-			SDL_RenderCopy(ren, ceu->texture, NULL, NULL);				
-			SDL_RenderCopy(ren, barco->texture, NULL, &barco->rect);
-			SDL_RenderCopy(ren, agua, NULL, &aguaRect1);	
-			SDL_RenderCopy(ren, agua, NULL, &aguaRect2);		
-			SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);	
-			SDL_RenderCopy(ren,textoTex ,NULL,&textoRect);
-			SDL_RenderPresent(ren);			
+		  	antes = SDL_GetTicks();	
 		  	if(isevt){ 
-		  		if(evento.type == SDL_KEYUP){
-		  			if(evento.key.keysym.sym == SDLK_ESCAPE) *screen = fim;
+		  		switch(evento.type){
+		  			case SDL_KEYUP:
+		  				if(evento.key.keysym.sym == SDLK_ESCAPE) *screen = fim;
+		  				break;
+		  			case SDL_QUIT:
+		  				*screen = fim;
+		  				break;
+		  			default:
+		  				SDL_FlushEvent(evento.type);
 		  		}
-  				if(evento.type == SDL_QUIT) *screen = fim;
 		  	}else{
 		  		espera = 100;
 		  		if(barco->rect.x <= 1200){
@@ -49,6 +47,14 @@ void rodaTelaFinal(SDL_Renderer* ren,dadosPlayer *personagem,dadosBarco *barco,d
 		  		}
 		  		if(textoRect.y <= 150) textoRect.y+= 2;
 			}
+			SDL_RenderClear(ren);
+			SDL_RenderCopy(ren, ceu->texture, NULL, NULL);				
+			SDL_RenderCopy(ren, barco->texture, NULL, &barco->rect);
+			SDL_RenderCopy(ren, agua, NULL, &aguaRect1);	
+			SDL_RenderCopy(ren, agua, NULL, &aguaRect2);		
+			SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);	
+			SDL_RenderCopy(ren,textoTex ,NULL,&textoRect);
+			SDL_RenderPresent(ren);		
 		}
 	}
 }

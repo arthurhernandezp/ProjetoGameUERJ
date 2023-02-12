@@ -85,6 +85,14 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					switch (evt.key.keysym.sym){  
 						case SDLK_SPACE:
 							*screen =  telaFinal;
+							minigame->isca = NULL;
+							minigame->peixeMG = NULL;
+							minigame->texture = NULL;
+							for(i = 0; i < 3;i++){
+								for(int j = 0; j < 4;j++){
+									inventario->matrizItens[i][j].img = NULL; 
+								}
+							}
 						case SDLK_RIGHT:
 							if(personagem->lugar == onGround){
 								if(personagem->rect.x < 625){
@@ -198,6 +206,15 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 						}
 						else if(SDL_HasIntersection(&vendedor.rect, &personagem->rect) && listaCheia(*inventario)){
 							*screen = telaFinal;
+							minigame->isca = NULL;
+							minigame->peixeMG = NULL;
+							minigame->texture = NULL;
+							for(i = 0; i < 3;i++){
+								for(int j = 0; j < 4;j++){
+									inventario->matrizItens[i][j].img = NULL; 
+								}
+							}
+
 						}
 		 			}
 		 			else if(evt.key.keysym.sym == SDLK_i){
