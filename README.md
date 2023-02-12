@@ -24,4 +24,4 @@ Projeto feito para a materia Programação de Jogos / Professor Francisco Figuei
           - https://github.com/arthurhernandezp/ProjetoGameUERJ
      </li>
 </ul>
-roda () { gcc -o c.exe ProjetoFinal.c -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image && ./c.exe && rm c.exe; }
+<h1>roda () { gcc -o c.exe ProjetoFinal.c -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image && ./c.exe && rm c.exe; } </h1>
