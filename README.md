@@ -23,6 +23,7 @@
 ```bash
 git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 ```
+
 <h2>Bibliotecas Usadas e como Instalar no Ubuntu</h1>
 ```bash
 #install sdl2
