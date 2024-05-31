@@ -27,14 +27,9 @@ git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 
 <h2>Bibliotecas Usadas e como Instalar no Ubuntu</h1>
 ```
-git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
-```
-##SDL2
-```
 $ sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
 ```
-
-```
+``` sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
 #install sdl2_gfx 
 sudo apt install libsdl2-gfx-dev
 #install sdl image  - Uso de imagens
@@ -44,6 +39,7 @@ sudo apt install libsdl2-mixer-dev libsdl2-mixer-2.0-0 -y;
 #install sdl true type fonts - if you want to use text
 sudo apt install libfreetype6-dev libsdl2-ttf-dev libsdl2-ttf-2.0-0 -y;
 ```
+
 
 <h2>Execução dentro do diretorio do Game</h1>
 ```bash
