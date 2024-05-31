@@ -25,7 +25,7 @@ git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 ```
 
 <h2>Bibliotecas Usadas e como Instalar no Ubuntu</h1>
-```bash
+bash
 #install sdl2
 sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
 ```
