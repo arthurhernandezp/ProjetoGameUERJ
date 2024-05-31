@@ -29,24 +29,13 @@ git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 ```
 $ sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
 ```
-``` sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
-#install sdl2_gfx 
-sudo apt install libsdl2-gfx-dev
-#install sdl image  - Uso de imagens
-sudo apt install libsdl2-image-dev libsdl2-image-2.0-0 -y;
-#install sdl mixer  - Uso de efeitos sonoros
-sudo apt install libsdl2-mixer-dev libsdl2-mixer-2.0-0 -y;
-#install sdl true type fonts - if you want to use text
-sudo apt install libfreetype6-dev libsdl2-ttf-dev libsdl2-ttf-2.0-0 -y;
-```
-
 
 <h2>Execução dentro do diretorio do Game</h1>
 ```bash
-<h2>roda () { gcc -o c.exe ProjetoFinal.c -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image && ./c.exe && rm c.exe; } </h1>
+roda () { gcc -o c.exe ProjetoFinal.c -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image && ./c.exe && rm c.exe; }
 ```
 
-```bash
+```
 make
 ./c.exe
 ```
