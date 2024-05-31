@@ -1,4 +1,5 @@
-# Projeto-SDL_Game-UERJ Projeto feito para a materia Programação de Jogos / Professor Francisco Figueiredo G. Sant'anna <ul>
+# Projeto-SDL_Game-UERJ Projeto feito para a materia Programação de Jogos / Professor Francisco Figueiredo G. Sant'anna 
+# Versão 2.0 desenvolvida para a disciplina Estruturas de Linguagens /  Professor Paulo Mann
   <li> Qual o nome do jogo?</li>
   <ul>
     <li> .Peixe IO</li>
