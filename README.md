@@ -18,10 +18,10 @@ Projeto feito para a materia Programação de Jogos / Professor Francisco Figuei
      <li> O que você pretende e não pretende implementar.</li>
      <ul>
           <li>Pretendo: Animação de pesca, caminhar. Mini game de pesca. Inventario e/ou um lugar para vender os peixes e pontuar.
-          <li>Não pretendo: </li>
      </ul>
-     <li> Qual o link para o repositório com o código fonte?
+     <li><ul> Qual o link para o repositório com o código fonte?
           - https://github.com/arthurhernandezp/ProjetoGameUERJ
+          </ul>
      </li>
 </ul>
 <h1>roda () { gcc -o c.exe ProjetoFinal.c -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image && ./c.exe && rm c.exe; } </h1>
