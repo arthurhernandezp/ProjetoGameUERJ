@@ -21,7 +21,7 @@
 
 <h1>Getting Started</h1>
 ```
-git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
+$ git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 ```
 
 <h2>Bibliotecas Usadas e como Instalar no Ubuntu</h1>
