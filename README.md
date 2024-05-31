@@ -20,7 +20,7 @@
 </ul>
 
 <h1>Getting Started</h1>
-```bash
+```
 git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 ```
 
