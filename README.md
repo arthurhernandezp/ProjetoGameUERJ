@@ -27,6 +27,7 @@ git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 ```bash
 #install sdl2
 sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
+```
 #install sdl2_gfx 
 sudo apt install libsdl2-gfx-dev
 #install sdl image  - Uso de imagens
