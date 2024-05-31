@@ -18,4 +18,20 @@
   </ul>
   <ul> Qual o link para o repositório com o código fonte? - https://github.com/arthurhernandezp/ProjetoGameUERJ </ul>
 </ul>
+
+<h1>Bibliotecas Usadas e como Instalar no Ubuntu</h1>
+```batch
+#install sdl2
+sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
+
+#install sdl image  - Para usar imagens
+sudo apt install libjpeg-dev libwebp-dev libtiff5-dev libsdl2-image-dev libsdl2-image-2.0-0 -y;
+
+#install sdl mixer  - Usos de sons no menu
+sudo apt install libmikmod-dev libfishsound1-dev libsmpeg-dev liboggz2-dev libflac-dev libfluidsynth-dev libsdl2-mixer-dev libsdl2-mixer-2.0-0 -y;
+
+#install sdl true type fonts - Fontes
+sudo apt install libfreetype6-dev libsdl2-ttf-dev libsdl2-ttf-2.0-0 -y;
+```
+use 
 <h1>roda () { gcc -o c.exe ProjetoFinal.c -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image && ./c.exe && rm c.exe; } </h1>
