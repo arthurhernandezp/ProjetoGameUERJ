@@ -25,10 +25,12 @@
 git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 ```
 
-<h2>Bibliotecas Usadas e como Instalar no Ubuntu</h1>
+<h2>Bibliotecas Usadas e como Instalar no Ubuntu</h2>
+## SDL2
 ```
-$ sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
+sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
 ```
+
 
 <h2>Execução dentro do diretorio do Game</h1>
 
