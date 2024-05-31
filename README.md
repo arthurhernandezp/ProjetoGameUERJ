@@ -19,7 +19,8 @@
   <ul> Qual o link para o repositório com o código fonte? - https://github.com/arthurhernandezp/ProjetoGameUERJ </ul>
 </ul>
 
-#Getting Started
+<h1>Getting Started</h1>
+
 ```
 git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 ```
