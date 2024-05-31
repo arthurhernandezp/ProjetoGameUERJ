@@ -28,25 +28,25 @@ git clone https://github.com/arthurhernandezp/ProjetoGameUERJ
 <h2>Bibliotecas Usadas e como Instalar no Ubuntu</h2>
 
 ```
-sudo apt install libsdl2-dev libsdl2-2.0-0 -y
+sudo apt install libsdl2-dev -y
 ```
 
 ```
 sudo apt install libsdl2-gfx-dev -y
 ```
 ```
-sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
+sudo apt install libsdl2-dev -y;
 ```
 ```
-sudo apt install libsdl2-image-dev libsdl2-image-2.0-0 -y
-```
-
-```
-sudo apt install libsdl2-mixer-dev libsdl2-mixer-2.0-0 -y
+sudo apt install libsdl2-image-dev -y
 ```
 
 ```
-sudo apt install libsdl2-ttf-dev libsdl2-ttf-2.0-0 -y
+sudo apt install libsdl2-mixer-dev -y
+```
+
+```
+sudo apt install libsdl2-ttf-dev -y
 ```
 
 <h2>Execução dentro do diretorio do Game</h1>
