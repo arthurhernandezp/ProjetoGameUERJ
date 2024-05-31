@@ -6,7 +6,7 @@
   </ul>
   <li> Descreva o jogo em linhas gerais.</li>
   <ul>
-    <li> A ideia do jogo é ambientar uma cabana de pesca em 2d com mini game para conseguir pescar o peixe, com um sistema de inventário para armazenar o peixe e vender para pontuar.</li>
+    <li> A ideia do jogo é ambientar uma cabana de pesca em 2d com mini game para conseguir pescar o peixe, com um sistema de inventário para armazenar o peixe.</li>
   </ul>
   <li> Poste links ou vídeos relacionados</li>
   <ul>
