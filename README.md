@@ -31,10 +31,11 @@ $ sudo apt install libsdl2-dev libsdl2-2.0-0 -y;
 ```
 
 <h2>Execução dentro do diretorio do Game</h1>
-```bash
+
+```
 roda () { gcc -o c.exe ProjetoFinal.c -lSDL2 -lSDL2_ttf -lSDL2_mixer -lSDL2_image && ./c.exe && rm c.exe; }
 ```
-
+## OU
 ```
 make
 ./c.exe
