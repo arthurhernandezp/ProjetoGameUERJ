@@ -1,4 +1,4 @@
-void rodaTelaFinal(SDL_Renderer* ren,dadosPlayer *personagem,dadosBarco *barco,dadosCeu *ceu,unsigned short int * screen){
+void rodaTelaFinal(SDL_Renderer* ren,dadosPlayer *personagem,dadosBarco *barco,dadosCeu *ceu,uint8_t * screen){
 	if(*screen == telaFinal){
 		TTF_Init();
 		SDL_Color padrao = { 255,0,0,255 };
