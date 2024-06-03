@@ -17,9 +17,9 @@ void mudaTextura(SDL_Renderer* ren,dadosPlayer *personagem){
 	}
 }
 
-void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],unsigned short int * screen,dadosMinigame *minigame){
-	unsigned short int cur_state = 0;
-	int i = 0; int contFundo = 0;
+void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],uint8_t * screen,dadosMinigame *minigame){
+	uint8_t cur_state = 0;
+	uint8_t i = 0; uint8_t contFundo = 0;
 	dadosMouse mouse;
 	mouse.rect.x = 0; mouse.rect.y = 0; mouse.rect.w = 30; mouse.rect.h = 50;
 	mouse.state = 0;
@@ -67,10 +67,11 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
     SDL_Rect arvore = {130,324,179.2,224};
 	SDL_Rect cArv = (SDL_Rect) {89.6,0, 89.6,132 };
 	Uint32 antes = 0;
-	int var = 1;
-	int randAux = 0;
-	unsigned short int pescaAux = 0;
+	int8_t var = 1;
+	uint8_t randAux = 0;
+	uint8_t pescaAux = 0;
 	while (*screen == jogo) {	
+
 		espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 	  	SDL_Event evt; int isevt = AUX_WaitEventTimeoutCount(&evt,&espera);    
 	  	antes = SDL_GetTicks();
@@ -89,7 +90,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							minigame->peixeMG = NULL;
 							minigame->texture = NULL;
 							for(i = 0; i < 3;i++){
-								for(int j = 0; j < 4;j++){
+								for(uint8_t j = 0; j < 4;j++){
 									inventario->matrizItens[i][j].img = NULL; 
 								}
 							}
@@ -210,7 +211,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							minigame->peixeMG = NULL;
 							minigame->texture = NULL;
 							for(i = 0; i < 3;i++){
-								for(int j = 0; j < 4;j++){
+								for(uint8_t j = 0; j < 4;j++){
 									inventario->matrizItens[i][j].img = NULL; 
 								}
 							}
@@ -385,7 +386,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		else{
 			SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);
 			SDL_RenderCopy(ren, barco->texture, NULL, &barco->rect);		
-		}	
+		}
 		SDL_RenderCopy(ren, agua, NULL, &aguaRect);
 		SDL_RenderCopy(ren, grama, NULL, &gramaRect);		
 		//Desenha o botao "E"
@@ -421,6 +422,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		else if(mouse.state == 0) SDL_ShowCursor(true);
 		SDL_RenderCopy(ren,avatar, NULL, &avtRect);
 		SDL_RenderPresent(ren);	
+
 	}		
 	SDL_DestroyTexture(agua);
 	SDL_DestroyTexture(grama);
