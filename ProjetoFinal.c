@@ -7,6 +7,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <string.h>
 #include <SDL2/SDL_mixer.h>
+#include <stdint.h>
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 
 enum lugarPlayer {onGround = 0,onBoat};
@@ -23,9 +24,9 @@ typedef struct dadosMinigame{
 	SDL_Texture* texture;
 	SDL_Texture* peixeMG;
 	SDL_Texture* isca;
-	unsigned short int iscaSpeed;
-	unsigned short int peixeSpeed;
-	unsigned short int state;
+	uint8_t iscaSpeed;
+	uint8_t peixeSpeed;
+    uint8_t state;
 }dadosMinigame;
 
 
@@ -40,9 +41,9 @@ typedef struct dadosPlayer{
 	SDL_Rect rect;
 	SDL_Rect corte;
 	SDL_Texture* texture;
-	unsigned short int state;
+	uint8_t state;
 	//state 0 idle;  1 walking  ; 2 remando   ; 3 fishing
-	unsigned short int lugar;
+    uint8_t lugar;
 	// lugar 0 onGround; 1 onBoat
 }dadosPlayer;
 
@@ -54,20 +55,20 @@ typedef struct dadosBarco{
 typedef struct dadosBotao{
 	SDL_Rect rect;
 	SDL_Texture* texture;
-	unsigned short int state;
+	uint8_t state;
 }dadosBotao;
 
 typedef struct dadosMouse{
 	SDL_Rect rect;
 	SDL_Point point;
 	SDL_Texture *texture;
-	unsigned short int state;
+	uint8_t state;
 	//state 0: cursor padrao do windows// state 1: cursor de pesca
 }dadosMouse;
 
 typedef struct dadosCeu{
 	SDL_Texture* texture;
-	unsigned short int fundoAux;
+	uint8_t fundoAux;
 }dadosCeu;
 
 typedef struct dadosItem{
@@ -78,12 +79,12 @@ typedef struct dadosItem{
 
 typedef struct dadosInventario{
     dadosItem matrizItens[3][4];
-	short int n;//Numeros de itens inseridos
+    int8_t n;//Numeros de itens inseridos
 	SDL_Texture* texture;
 	SDL_Rect rect;
 	unsigned short int state;//fechado/ aberto
-	short int i;
-	short int j;
+    uint8_t i;
+	uint8_t j;
 	
 }dadosInventario;
 
@@ -133,7 +134,7 @@ int main (int argc, char* args[]){
     IMG_Init(0);   
     SDL_Window* win = create_window();
     SDL_Renderer* ren = create_renderer(win);
-    unsigned short int screen = menu;
+    uint8_t screen = menu;
     dadosPlayer player;
     player.rect = (SDL_Rect) {0,460,100,80};
     player.corte = (SDL_Rect) { 0,0, 48,48 };
@@ -160,7 +161,7 @@ int main (int argc, char* args[]){
 	listaItens[4] = "imgs/Icons_08.png";
 	listaItens[5] = "imgs/Icons_09.png";
 	listaItens[6] = "imgs/Icons_10.png";
-	for(int i = 0;i < 7;i++) assert(listaItens[i] != NULL);
+	for(uint8_t i = 0;i < 7;i++) assert(listaItens[i] != NULL);
 	//CRIA MINIGAME
 	dadosMinigame minigame;
 	minigame.state = cancelado;
