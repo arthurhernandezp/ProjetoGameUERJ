@@ -98,6 +98,19 @@ int AUX_WaitEventTimeoutCount(SDL_Event* evt, Uint32* ms){
     } return 0;
 }
 
+// Função auxiliar para debug
+const char *nomeTecla(SDL_Keycode tecla) {
+    switch (tecla) {
+        case SDLK_RETURN: return "ENTER";
+        case SDLK_ESCAPE: return "ESC";
+        case SDLK_SPACE: return "ESPAÇO";
+        case SDLK_RIGHT: return "SETA PARA DIREITA";
+        case SDLK_LEFT: return "SETA PARA ESQUERDA";
+        // Adicionar mais casos 
+        default: return "TECLA DESCONHECIDA";
+    }
+}
+
 SDL_Window* create_window(void) {
     SDL_Window* win = SDL_CreateWindow("ProjetoP2",
                          SDL_WINDOWPOS_UNDEFINED,
@@ -106,8 +119,14 @@ SDL_Window* create_window(void) {
                       );
 
     if(win==NULL) {
-        printf("Janela não foi criada.\nSDL_Error: %s\n", SDL_GetError());
-    }
+		#ifdef DEBUG
+        	printf("Janela não foi criada.\nSDL_Error: %s\n", SDL_GetError());
+        #endif
+    }else{
+		#ifdef DEBUG
+    		printf("Win Criada\n");
+		#endif
+	}
 
     return win;
 }
@@ -116,7 +135,13 @@ SDL_Renderer* create_renderer(SDL_Window* win) {
     SDL_Renderer* ren = SDL_CreateRenderer(win, -1, 0);
 
     if(win==NULL) {
-        printf("Janela não foi criada.\nSDL_Error: %s\n", SDL_GetError());
+    	#ifdef DEBUBG
+        	printf("Janela não foi criada.\nSDL_Error: %s\n", SDL_GetError());
+		#endif
+    }else{
+   		#ifdef DEBUG
+    		printf("Renderer Criado\n");
+		#endif
     }
 
     SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
@@ -142,15 +167,24 @@ int main (int argc, char* args[]){
     player.lugar = onGround;
 	player.texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
 	assert(player.texture != NULL); 
+	#ifdef DEBUG
+		printf("\nPersonagem criado na memoria!");
+	#endif
 	dadosCeu ceu;
 	ceu.texture = IMG_LoadTexture(ren, "imgs/bg7.png");
 	ceu.fundoAux = 5;
 	assert(ceu.texture != NULL); 
-	
+	#ifdef DEBUG
+		printf("\nFundo de tela criado na memoria");
+	#endif
 	dadosBarco barco;
 	barco.rect = (SDL_Rect) { 564,513, 148,36 };
 	barco.texture = IMG_LoadTexture(ren, "imgs/Boat.png");
 	assert(barco.texture != NULL); 
+	
+	#ifdef DEBUG
+		printf("\nBarco criado na memoria");
+	#endif
 	dadosInventario inventario;
     constroi(ren,&inventario,690,150); 
 	char * listaItens[7];
@@ -162,6 +196,10 @@ int main (int argc, char* args[]){
 	listaItens[5] = "imgs/Icons_09.png";
 	listaItens[6] = "imgs/Icons_10.png";
 	for(uint8_t i = 0;i < 7;i++) assert(listaItens[i] != NULL);
+	#ifdef DEBUG
+		printf("\nLista de itens criado");
+	#endif
+	
 	//CRIA MINIGAME
 	dadosMinigame minigame;
 	minigame.state = cancelado;
@@ -173,15 +211,21 @@ int main (int argc, char* args[]){
 	minigame.rect = (SDL_Rect){ 620,380,308,66};
 	minigame.iscaSpeed = 5;
 	minigame.peixeSpeed = 0;
+	#ifdef DEBUG
+		printf("\nMiniGame criado na memoria");
+	#endif
     /* EXECUÇÃO */
     while(screen != fim){
     	switch (screen) {
             case menu:
                 chamaMenu(ren,&screen);
+                break;
             case jogo:  
                 rodaJogo(ren,&player,&ceu,&barco,&inventario,listaItens,&screen,&minigame);
+                break;
             case telaFinal:
             	rodaTelaFinal(ren,&player,&barco,&ceu,&screen);
+            	break;
         } 
 	}
     /* FINALIZACAO */
