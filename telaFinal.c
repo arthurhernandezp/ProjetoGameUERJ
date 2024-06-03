@@ -62,4 +62,3 @@ void rodaTelaFinal(SDL_Renderer* ren,dadosPlayer *personagem,dadosBarco *barco,d
 
 
 
-
