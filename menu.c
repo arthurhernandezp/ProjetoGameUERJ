@@ -4,7 +4,7 @@ void mudaCor(SDL_Renderer* ren,SDL_Surface* listaS[],SDL_Texture* listaT[],SDL_C
 	listaT[i] = SDL_CreateTextureFromSurface(ren,listaS[i]);
 }
 
-void chamaMenu(SDL_Renderer* ren,unsigned short int * screen){
+void chamaMenu(SDL_Renderer* ren,uint8_t * screen){
     TTF_Init();
     SDL_Color padrao = { 0,0,0,255 };
     SDL_Color focus = { 0,157,231,255 };
@@ -21,8 +21,8 @@ void chamaMenu(SDL_Renderer* ren,unsigned short int * screen){
 	listaTextureText[0] = SDL_CreateTextureFromSurface(ren,listaSurfaceText[0]);
 	listaTextureText[1] = SDL_CreateTextureFromSurface(ren,listaSurfaceText[1]);
     listaTextureText[2] = SDL_CreateTextureFromSurface(ren,listaSurfaceText[2]);
-    int i = 0;
-    int espera = 0;    
+    uint8_t i = 0;
+    uint32_t espera = 0;    
 	Uint32 antes = 0;
     bool selecionado = false;
     SDL_Point mouse = {0,0};
@@ -38,7 +38,7 @@ void chamaMenu(SDL_Renderer* ren,unsigned short int * screen){
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
     Mix_Volume(1, 4);
     Mix_Music *backgroundSound = Mix_LoadMUS("menu.mp3");
-    int count = 0;
+    uint8_t count = 0;
     while(*screen == menu){
     	//desenha o menu	
 		SDL_RenderCopy(ren, bgmenu, NULL, NULL);		
