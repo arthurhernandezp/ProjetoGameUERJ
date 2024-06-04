@@ -231,7 +231,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							else if(SDL_HasIntersection(&vendedor.rect, &personagem->rect) && listaCheia(*inventario)){
 								*screen = telaFinal;
 								#ifdef DEBUG
-                           			 printf("Estado da Screen mudou para 'telaFinal' quando o inventario está cheio\n");  // Debugging log
+                           			 printf("Estado da Screen mudou para 'telaFinal' quando apertou 'e' colidindo com o vendendor e com o inventario está cheio\n");  // Debugging log
 		                        #endif
 
 								minigame->isca = NULL;
