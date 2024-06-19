@@ -90,18 +90,16 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 		  	}else{
 		  		espera = 500;
 		  		contFundo += 1;
-		  		#ifdef DEBUG
-		  				printf("\nContador do buff: %d\n",personagem->buff.contador);
-		  				printf("\nContador do buff: %d\n",personagem->buff.ativo);
-	  			#endif
+
 		  		if(personagem->buff.ativo && personagem->buff.contador >= 1){
 		  			personagem->buff.contador -= 1;
 		  			if(personagem->buff.contador == 0) {
 		  				personagem->buff.ativo = false;
 		  				personagem->buff.velocidade = 0;
 		  			}
-		  			#ifdef DEBUG
-		  				//printf("\nContador do buff: %d\n",personagem->buff.contador);
+			  		#ifdef DEBUG
+			  				printf("\nContador do buff: %d\n",personagem->buff.contador);
+			  				printf("\nEstado do buff: %s\n",(personagem->buff.ativo == 1) ? "True" : "False");
 		  			#endif
 		  		}
 	 			if (contFundo == 15){
