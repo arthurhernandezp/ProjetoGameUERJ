@@ -1,11 +1,7 @@
-void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,uint8_t * screen){
+void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inventario,dadosCeu *ceu,uint8_t * screen){
 	if(*screen == casa){
 		Uint32 antes = 0;
 		int espera = 0;    
-
-		personagem->rect.y = 320;
-		personagem->rect.x = 800;
-		personagem->corte.y = personagem->corte.x = 0;
 		
 		SDL_Rect casaRect = {74,63,852,474};
 		SDL_Texture* fundoCasa = IMG_LoadTexture(ren, "imgs/interior_house.jpg");
@@ -15,7 +11,7 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,uint8_t * screen){
 		botao.texture = IMG_LoadTexture(ren, "imgs/botao.png");
 		
 		SDL_SetRenderDrawColor(ren,0,0,0,255);
-		
+		uint8_t contFundo = 0;
 		while(*screen == casa){
 			espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 		  	SDL_Event evento; int isevt = AUX_WaitEventTimeoutCount(&evento,&espera);    
@@ -28,10 +24,19 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,uint8_t * screen){
 		  					 personagem->rect.y= 415;
 		  					 personagem->rect.x=368;
 		  					 break;
-		  				}
-		  				if(evento.key.keysym.sym == SDLK_RIGHT || evento.key.keysym.sym == SDLK_LEFT){
+		  				}else if(evento.key.keysym.sym == SDLK_i){
+			 				if(inventario->state == fechado) inventario->state = aberto;
+							else if(inventario->state == aberto) inventario->state = fechado;
+			 			}else if(evento.key.keysym.sym == SDLK_ESCAPE){
+								*screen = menu;
+								#ifdef DEBUG
+			                        printf("Estado de Screen mudou para 'menu' usando SDLK_ESCAPE\n");  // Debugging log
+								#endif
+						}
+		  				else{
 			 				 personagem->state = idle;
 			 			}
+			 			
 						#ifdef DEBUG
 							printf("\nTecla solta: %s\n", nomeTecla(evento.key.keysym.sym));
     						printf("Estado do personagem: %d\n", personagem->state);
@@ -73,6 +78,15 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,uint8_t * screen){
 		  		}
 		  	}else{
 		  		espera = 500;
+		  		contFundo += 1;
+	 			if (contFundo == 15){
+					(ceu->fundoAux)++;
+					contFundo = 0;
+				}
+				if(personagem->state == idle){
+					if (personagem->corte.x < 240) personagem->corte.x +=48;
+					else personagem->corte.x = 0;
+				}
 			}
 			mudaTextura(ren,personagem);
 			SDL_RenderClear(ren);
@@ -85,6 +99,7 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,uint8_t * screen){
 				botao.rect.y = 250;
 				SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
 			}
+			if(inventario->state == aberto) chamaInventario(ren,*inventario);
 			SDL_RenderPresent(ren);		
 		}
 	}
