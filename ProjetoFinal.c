@@ -118,6 +118,8 @@ const char *nomeTecla(SDL_Keycode tecla) {
         case SDLK_RIGHT: return "SETA PARA DIREITA";
         case SDLK_LEFT: return "SETA PARA ESQUERDA";
         case SDLK_e: return "E";
+        case SDLK_d: return "D";
+        case SDLK_i: return "I";
         // Adicionar mais casos 
         default: return "TECLA DESCONHECIDA";
     }
@@ -251,8 +253,6 @@ int main (int argc, char* args[]){
 	#ifdef DEBUG
 		printf("\nMiniGame criado na memoria");
 	#endif
-	
-	
 	
 	
     /* EXECUÇÃO */
