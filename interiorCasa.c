@@ -12,6 +12,10 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 
 		SDL_SetRenderDrawColor(ren,0,0,0,255);
 		uint8_t contFundo = 0;
+		
+		SDL_Texture* avatar = IMG_LoadTexture(ren, "imgs/barco.png");
+		SDL_Rect avtRect = {20,20,180,75};
+		
 		while(*screen == casa){
 			espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 		  	SDL_Event evento; int isevt = AUX_WaitEventTimeoutCount(&evento,&espera);    
@@ -31,6 +35,13 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 								*screen = menu;
 								#ifdef DEBUG
 			                        printf("Estado de Screen mudou para 'menu' usando SDLK_ESCAPE\n");  // Debugging log
+								#endif
+						}else if(evento.key.keysym.sym == SDLK_d && personagem->state != dormindo){
+								personagem->state = dormindo;
+								personagem->corte.x = 0;
+								personagem->corte.y = 0;
+								#ifdef DEBUG
+			                        printf("Estado do personagem mudou para 'dormindo' usando SDLK_d\n");  // Debugging log
 								#endif
 						}
 		  				else{
@@ -86,6 +97,9 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 				if(personagem->state == idle){
 					if (personagem->corte.x < 240) personagem->corte.x +=48;
 					else personagem->corte.x = 0;
+				}else if(personagem->state == dormindo){
+					if (personagem->corte.x < 240) personagem->corte.x +=48;
+					espera +=50;
 				}
 			}
 			mudaTextura(ren,personagem);
@@ -100,6 +114,7 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 				SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
 			}
 			if(inventario->state == aberto) chamaInventario(ren,*inventario);
+			SDL_RenderCopy(ren,avatar, NULL, &avtRect);
 			SDL_RenderPresent(ren);		
 		}
 		
