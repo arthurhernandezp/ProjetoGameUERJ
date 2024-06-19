@@ -90,6 +90,20 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 		  	}else{
 		  		espera = 500;
 		  		contFundo += 1;
+		  		#ifdef DEBUG
+		  				printf("\nContador do buff: %d\n",personagem->buff.contador);
+		  				printf("\nContador do buff: %d\n",personagem->buff.ativo);
+	  			#endif
+		  		if(personagem->buff.ativo && personagem->buff.contador >= 1){
+		  			personagem->buff.contador -= 1;
+		  			if(personagem->buff.contador == 0) {
+		  				personagem->buff.ativo = false;
+		  				personagem->buff.velocidade = 0;
+		  			}
+		  			#ifdef DEBUG
+		  				//printf("\nContador do buff: %d\n",personagem->buff.contador);
+		  			#endif
+		  		}
 	 			if (contFundo == 15){
 					(ceu->fundoAux)++;
 					contFundo = 0;
@@ -99,22 +113,37 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 					else personagem->corte.x = 0;
 				}else if(personagem->state == dormindo){
 					if (personagem->corte.x < 240) personagem->corte.x +=48;
-					espera +=50;
+					else{
+						personagem->buff.ativo = true;
+						personagem->buff.velocidade = VELOCIDADE_CONTADOR;
+						personagem->buff.contador = CONTADOR_DEFAULT;
+						personagem->state = idle;
+					}
+					espera +=250;
 				}
 			}
 			mudaTextura(ren,personagem);
 			SDL_RenderClear(ren);
-			//Desenha o botao "E"
+
 			
 			SDL_RenderCopy(ren, fundoCasa, NULL, &casaRect);					
 			SDL_RenderCopy(ren, personagem->texture, &personagem->corte, &personagem->rect);	
+			//Desenha o botao "E"
 			if(personagem->rect.x >= 709){
 				botao.rect.x = 761;
 				botao.rect.y = 250;
 				SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
 			}
+			
+			//Desenha moldura do avatar
 			if(inventario->state == aberto) chamaInventario(ren,*inventario);
 			SDL_RenderCopy(ren,avatar, NULL, &avtRect);
+			
+			//Desenha buff
+			if(personagem->buff.ativo){
+				SDL_RenderCopy(ren,personagem->buff.texture, NULL, &personagem->buff.rect);
+			}
+			
 			SDL_RenderPresent(ren);		
 		}
 		
