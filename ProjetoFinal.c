@@ -11,7 +11,7 @@
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 
 enum lugarPlayer {onGround = 0,onBoat};
-enum playerStates {idle = 0,walking,noBarco,remando,fishing, pulling};
+enum playerStates {idle = 0,walking,noBarco,remando,fishing, pulling,dormindo};
 enum inventarioStates {fechado = 0,aberto};
 enum telaStates {menu=0,jogo,casa,telaFinal,fim};
 enum mouseStates {ready=0,cancelled,clicked,dropped,dragging,clicking}; 
