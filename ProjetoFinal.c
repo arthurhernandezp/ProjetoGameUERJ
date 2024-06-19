@@ -226,7 +226,7 @@ int main (int argc, char* args[]){
                 rodaJogo(ren,&player,&ceu,&barco,&inventario,listaItens,&screen,&minigame);
                 break;
             case casa:
-            	interiorCasa(ren,&player,&barco,&ceu,&screen);
+            	interiorCasa(ren,&player,&screen);
             	break;
             case telaFinal:
             	rodaTelaFinal(ren,&player,&barco,&ceu,&screen);
