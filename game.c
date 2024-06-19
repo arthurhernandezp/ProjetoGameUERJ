@@ -27,6 +27,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 			printf("Estado do personagem: %d\n", personagem->state);
 			printf("Fundo de tela atual: %d\n", ceu->fundoAux);
 			printf("Numero de peixes no inventario: %d\n", inventario->n);
+			printf("Velocidade do buff de pesca: %d\n",personagem->buff.velocidade);
 		#endif
 		
 		uint8_t cur_state = 0;
@@ -289,6 +290,16 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					aguaRect.y = aguaRect.y + 1 * (var);
 					var *= -1;
 					espera = 500;
+			  		if(personagem->buff.ativo && personagem->buff.contador >= 1){
+			  			personagem->buff.contador -= 1;
+			  			if(personagem->buff.contador == 0) {
+			  				personagem->buff.ativo = false;
+			  				personagem->buff.velocidade = 0;
+			  			}
+			  			#ifdef DEBUG
+			  				printf("\nContador do buff: %d\n",personagem->buff.contador);
+			  			#endif
+		  			}
 				}
 				if(personagem->lugar == onGround){
 					if (personagem->corte.x < 240) personagem->corte.x +=48;
@@ -326,16 +337,16 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							if(personagem->corte.x < 96) personagem->corte.x += 48;
 							else personagem->corte.x = 0;
 							pescaAux = 0;
-						}
+						}/*
 						if(cur_state == clicking){
 		    				minigame->rIsca.x += minigame->iscaSpeed;
 							if(minigame->rIsca.x < minigame->rPeixe.x) minigame->rPeixe.x += minigame->peixeSpeed;
 							else minigame->rPeixe.x += 1;
-		    			}
+		    			}*/
 						if(cur_state == clicking){
 							minigame->rIsca.x += minigame->iscaSpeed;
-							if(minigame->rIsca.x < minigame->rPeixe.x) minigame->rPeixe.x += minigame->peixeSpeed;
-							else minigame->rPeixe.x += 1;
+							if(minigame->rIsca.x < minigame->rPeixe.x) minigame->rPeixe.x += minigame->peixeSpeed + personagem->buff.velocidade;
+							else minigame->rPeixe.x += 1 + personagem->buff.velocidade;
 						}
 						else minigame->rIsca.x -= minigame->iscaSpeed;
 						espera = 100;
@@ -477,6 +488,11 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 			else if(mouse.state == 0) SDL_ShowCursor(true);
 			
 			SDL_RenderCopy(ren,avatar, NULL, &avtRect);
+			
+			//Desenha o buff de pesca
+			if(personagem->buff.ativo){
+				SDL_RenderCopy(ren,personagem->buff.texture, NULL, &personagem->buff.rect);
+			}
 			SDL_RenderPresent(ren);	
 
 		}		
