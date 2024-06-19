@@ -210,22 +210,29 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					break;
 				}
 				if(evt.type == SDL_KEYUP){
+						#ifdef DEBUG
+							printf("\nTecla solta: %s\n", nomeTecla(evt.key.keysym.sym));
+    						printf("Estado do personagem: %d\n", personagem->state);
+                            printf("Posicao x: %d | Posicao y: %d\n", personagem->rect.x,personagem->rect.y);
+						#endif
 			 			if(evt.key.keysym.sym == SDLK_RIGHT || evt.key.keysym.sym == SDLK_LEFT && personagem->lugar == onGround){
 			 				 personagem->state = idle;
 			 			}
 			 			else if(evt.key.keysym.sym == SDLK_e){
 				 			if(personagem->rect.x >= barco->rect.x && personagem->lugar == onGround){
-				 						#ifdef DEBUG
-				 							printf("Entrou no Barco");
-				 						#endif
-										personagem->lugar = onBoat;
-										personagem->rect.y = 473;
-										personagem->rect.x = (barco->rect.w)/2 + barco->rect.x;
-										personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
-										personagem->corte.x = 0;
-
+		 						#ifdef DEBUG
+		 							printf("Entrou no Barco");
+		 						#endif
+								personagem->lugar = onBoat;
+								personagem->rect.y = 473;
+								personagem->rect.x = (barco->rect.w)/2 + barco->rect.x;
+								personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
+								personagem->corte.x = 0;
 							}
 							else if(personagem->rect.x <= 652 && personagem->lugar == onBoat){
+					  			#ifdef DEBUG
+			  						printf("\nSaiu do Barco: %d\n",personagem->buff.contador);
+			  					#endif
 								personagem->lugar = onGround;	
 								personagem->rect.x =  632;
 								personagem->rect.y = 415;
@@ -260,8 +267,18 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							}
 			 			}
 			 			else if(evt.key.keysym.sym == SDLK_i){
-			 				if(inventario->state == fechado) inventario->state = aberto;
-							else if(inventario->state == aberto) inventario->state = fechado;
+			 				if(inventario->state == fechado){
+			 					inventario->state = aberto;
+					  			#ifdef DEBUG
+			  						printf("\nEstado do inventario: %s\n","Aberto");
+			  					#endif
+			  				}
+							else if(inventario->state == aberto){
+								inventario->state = fechado;
+					  			#ifdef DEBUG
+			  						printf("\nEstado do inventario: %s\n","Fechado");
+			  					#endif
+			  				}							
 			 			}
 			 			else if(evt.key.keysym.sym == SDLK_ESCAPE){
 								*screen = menu;
@@ -274,11 +291,6 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 						else{
 							if(personagem->state == walking) personagem->state = idle;
 						}
-						#ifdef DEBUG
-							printf("\nTecla solta: %s\n", nomeTecla(evt.key.keysym.sym));
-    						printf("Estado do personagem: %d\n", personagem->state);
-                            printf("Posicao x: %d | Posicao y: %d\n", personagem->rect.x,personagem->rect.y);
-						#endif
 				}
 			} else {   
 				if(personagem->state != pulling){
