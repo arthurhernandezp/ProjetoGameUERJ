@@ -13,7 +13,7 @@
 enum lugarPlayer {onGround = 0,onBoat};
 enum playerStates {idle = 0,walking,noBarco,remando,fishing, pulling};
 enum inventarioStates {fechado = 0,aberto};
-enum telaStates {menu=0,jogo,telaFinal,fim};
+enum telaStates {menu=0,jogo,casa,telaFinal,fim};
 enum mouseStates {ready=0,cancelled,clicked,dropped,dragging,clicking}; 
 enum minigameState {cancelado = 0, emjogo, concluido};
 enum dialogoState {off = 0,on};
@@ -106,6 +106,7 @@ const char *nomeTecla(SDL_Keycode tecla) {
         case SDLK_SPACE: return "ESPAÇO";
         case SDLK_RIGHT: return "SETA PARA DIREITA";
         case SDLK_LEFT: return "SETA PARA ESQUERDA";
+        case SDLK_e: return "E";
         // Adicionar mais casos 
         default: return "TECLA DESCONHECIDA";
     }
@@ -153,6 +154,7 @@ SDL_Renderer* create_renderer(SDL_Window* win) {
 #include "game.c"
 #include "menu.c"
 #include "telaFinal.c"
+#include "interiorCasa.c"
 int main (int argc, char* args[]){
     /* INICIALIZACAO */
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -223,6 +225,9 @@ int main (int argc, char* args[]){
             case jogo:  
                 rodaJogo(ren,&player,&ceu,&barco,&inventario,listaItens,&screen,&minigame);
                 break;
+            case casa:
+            	interiorCasa(ren,&player,&barco,&ceu,&screen);
+            	break;
             case telaFinal:
             	rodaTelaFinal(ren,&player,&barco,&ceu,&screen);
             	break;
