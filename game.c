@@ -15,6 +15,9 @@ void mudaTextura(SDL_Renderer* ren,dadosPlayer *personagem){
 	else if(personagem->lugar == onBoat && personagem->state == pulling){
 		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_hook.png");
 	}
+	else if(personagem->state == dormindo){
+		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_dormir.png");
+	}
 }
 
 void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],uint8_t * screen,dadosMinigame *minigame){
