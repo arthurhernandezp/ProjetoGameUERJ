@@ -4,7 +4,7 @@ void mudaCor(SDL_Renderer* ren,SDL_Surface* listaS[],SDL_Texture* listaT[],SDL_C
 	listaT[i] = SDL_CreateTextureFromSurface(ren,listaS[i]);
 }
 
-void chamaMenu(SDL_Renderer* ren,uint8_t * screen){
+void chamaMenu(SDL_Renderer* ren,uint8_t * screen,uint8_t * screenAnterior){
 	if(*screen == menu){
 		#ifdef DEBUG
 			printf("\nIniciando Menu");
@@ -43,6 +43,10 @@ void chamaMenu(SDL_Renderer* ren,uint8_t * screen){
 		Mix_Volume(1, 4);
 		Mix_Music *backgroundSound = Mix_LoadMUS("menu.mp3");
 		uint8_t count = 0;
+		#ifdef DEBUG
+			printf("\nScreen Atual: %s",nomeScreen(*screen));
+			printf("\nScreen Anterior: %s",nomeScreen(*screenAnterior));
+		#endif
 		while(*screen == menu){
 			//desenha o menu	
 			SDL_RenderCopy(ren, bgmenu, NULL, NULL);		
@@ -91,7 +95,22 @@ void chamaMenu(SDL_Renderer* ren,uint8_t * screen){
 								}
 							}
 							else if(SDL_PointInRect(&mouse,&recContinue) && selecionado){
-								    *screen = jogo;
+								#ifdef DEBUG
+									printf("\nScreen Atual: %s",nomeScreen(*screen));
+									printf("\nScreen Anterior: %s\n",nomeScreen(*screenAnterior));
+								#endif
+								if(*screenAnterior == jogo || *screenAnterior == menu){
+									 *screen = jogo;
+									 #ifdef DEBUG
+										printf("\nMudei para Jogo\n");
+									#endif
+								}
+								else if(*screenAnterior == casa){
+									*screen = casa;
+									 #ifdef DEBUG
+										printf("\nMudei para casa\n");
+									#endif
+								}
 							}
 						}
 					break;
