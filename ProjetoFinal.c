@@ -112,6 +112,19 @@ const char *nomeTecla(SDL_Keycode tecla) {
     }
 }
 
+const char *nomeScreen(uint8_t screen) {
+    switch (screen) {
+        case 0: return "menu";
+        case 1: return "jogo";
+        case 2: return "casa";
+        case 3: return "tela final";
+        case 4: return "Fim";
+        // Adicionar mais casos 
+        default: return "TECLA DESCONHECIDA";
+    }
+}
+
+
 SDL_Window* create_window(void) {
     SDL_Window* win = SDL_CreateWindow("ProjetoP2",
                          SDL_WINDOWPOS_UNDEFINED,
@@ -155,6 +168,7 @@ SDL_Renderer* create_renderer(SDL_Window* win) {
 #include "menu.c"
 #include "telaFinal.c"
 #include "interiorCasa.c"
+
 int main (int argc, char* args[]){
     /* INICIALIZACAO */
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -162,6 +176,7 @@ int main (int argc, char* args[]){
     SDL_Window* win = create_window();
     SDL_Renderer* ren = create_renderer(win);
     uint8_t screen = menu;
+    uint8_t screenAnterior = menu;
     dadosPlayer player;
     player.rect = (SDL_Rect) {0,460,100,80};
     player.corte = (SDL_Rect) { 0,0, 48,48 };
@@ -220,13 +235,15 @@ int main (int argc, char* args[]){
     while(screen != fim){
     	switch (screen) {
             case menu:
-                chamaMenu(ren,&screen);
+                chamaMenu(ren,&screen,&screenAnterior);
                 break;
             case jogo:  
                 rodaJogo(ren,&player,&ceu,&barco,&inventario,listaItens,&screen,&minigame);
+                screenAnterior = jogo;
                 break;
             case casa:
-            	interiorCasa(ren,&player,&screen);
+            	interiorCasa(ren,&player,&inventario,&ceu,&screen);
+                screenAnterior = casa;
             	break;
             case telaFinal:
             	rodaTelaFinal(ren,&player,&barco,&ceu,&screen);
