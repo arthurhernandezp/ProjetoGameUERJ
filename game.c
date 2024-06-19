@@ -244,6 +244,12 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 								}
 
 							}
+							else if(personagem->rect.x >= 355 && personagem->rect.x <= 401){
+								*screen = casa;
+								#ifdef DEBUG
+                           			 printf("Estado da Screen mudou para 'interiorcasa' quando apertou 'e' na porta\n");  // Debugging log
+		                        #endif
+							}
 			 			}
 			 			else if(evt.key.keysym.sym == SDLK_i){
 			 				if(inventario->state == fechado) inventario->state = aberto;
@@ -263,6 +269,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 						#ifdef DEBUG
 							printf("\nTecla solta: %s\n", nomeTecla(evt.key.keysym.sym));
     						printf("Estado do personagem: %d\n", personagem->state);
+                            printf("Posicao x: %d | Posicao y: %d\n", personagem->rect.x,personagem->rect.y);
 						#endif
 				}
 			} else {   
@@ -423,14 +430,20 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 				SDL_RenderCopy(ren, barco->texture, NULL, &barco->rect);		
 			}
 			SDL_RenderCopy(ren, agua, NULL, &aguaRect);
-			SDL_RenderCopy(ren, grama, NULL, &gramaRect);		
+			SDL_RenderCopy(ren, grama, NULL, &gramaRect);	
+				
 			//Desenha o botao "E"
 			if( (personagem->rect.x >= barco->rect.x && personagem->lugar == onGround) ||
 			(personagem->rect.x > 554 && personagem->rect.x < 652 && personagem->lugar == onBoat ) && personagem->state !=pulling && personagem->state != fishing) {
 				botao.rect.x =632;
 				botao.rect.y = 375;
 				SDL_RenderCopy(ren, botao.texture, NULL, &botao.rect);
-			}	
+			}else if(personagem->rect.x >= 355 && personagem->rect.x <= 401){
+                botao.rect.x = 380;
+                botao.rect.y = 300;
+                SDL_RenderCopy(ren,botao.texture, NULL,&botao.rect);
+            }
+            
 			//DESENHA BOTAO E DIALOGO DO VENDEDOR
 			if(SDL_HasIntersection(&vendedor.rect, &personagem->rect)) {
 				if(listaCheia(*inventario)){
