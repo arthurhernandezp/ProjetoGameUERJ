@@ -9,7 +9,7 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 		dadosBotao botao;
 		botao.rect = (SDL_Rect) {632,375,35,35};
 		botao.texture = IMG_LoadTexture(ren, "imgs/botao.png");
-		
+
 		SDL_SetRenderDrawColor(ren,0,0,0,255);
 		uint8_t contFundo = 0;
 		while(*screen == casa){
@@ -102,6 +102,9 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 			if(inventario->state == aberto) chamaInventario(ren,*inventario);
 			SDL_RenderPresent(ren);		
 		}
+		
+		SDL_DestroyTexture(fundoCasa);
+		SDL_DestroyTexture(botao.texture);
 	}
 }
 	

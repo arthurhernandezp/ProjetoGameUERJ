@@ -212,7 +212,7 @@ int main (int argc, char* args[]){
 	listaItens[4] = "imgs/Icons_08.png";
 	listaItens[5] = "imgs/Icons_09.png";
 	listaItens[6] = "imgs/Icons_10.png";
-	for(uint8_t i = 0;i < 7;i++) assert(listaItens[i] != NULL);
+	//for(uint8_t i = 0;i < 7;i++) assert(listaItens[i] != NULL);
 	#ifdef DEBUG
 		printf("\nLista de itens criado");
 	#endif
