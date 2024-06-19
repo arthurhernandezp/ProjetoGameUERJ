@@ -246,6 +246,10 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							}
 							else if(personagem->rect.x >= 355 && personagem->rect.x <= 401){
 								*screen = casa;
+								personagem->rect.y = 320;
+								personagem->rect.x = 800;
+								personagem->corte.y = personagem->corte.x = 0;
+								break;
 								#ifdef DEBUG
                            			 printf("Estado da Screen mudou para 'interiorcasa' quando apertou 'e' na porta\n");  // Debugging log
 		                        #endif
