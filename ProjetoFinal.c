@@ -9,6 +9,8 @@
 #include <SDL2/SDL_mixer.h>
 #include <stdint.h>
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
+#define CONTADOR_DEFAULT 20
+#define VELOCIDADE_CONTADOR 5
 
 enum lugarPlayer {onGround = 0,onBoat};
 enum playerStates {idle = 0,walking,noBarco,remando,fishing, pulling,dormindo};
@@ -37,6 +39,14 @@ typedef struct dadosVendedor{
 	SDL_Texture *dialogo;
 }dadosVendedor;
 
+typedef struct dadosBuff{
+	SDL_Texture *texture;
+	SDL_Rect rect;
+	uint8_t contador;
+	bool ativo;
+	uint8_t velocidade;
+}dadosBuff;
+
 typedef struct dadosPlayer{
 	SDL_Rect rect;
 	SDL_Rect corte;
@@ -45,6 +55,7 @@ typedef struct dadosPlayer{
 	//state 0 idle;  1 walking  ; 2 remando   ; 3 fishing
     uint8_t lugar;
 	// lugar 0 onGround; 1 onBoat
+	dadosBuff buff;
 }dadosPlayer;
 
 typedef struct dadosBarco{
@@ -175,8 +186,10 @@ int main (int argc, char* args[]){
     IMG_Init(0);   
     SDL_Window* win = create_window();
     SDL_Renderer* ren = create_renderer(win);
+    //Criação do menu e menu anterior para manipulação da transição de ( (jogo->menu && menu->jogo) || (casa->menu && menu-> casa) )
     uint8_t screen = menu;
     uint8_t screenAnterior = menu;
+    //Criação do personagem
     dadosPlayer player;
     player.rect = (SDL_Rect) {0,460,100,80};
     player.corte = (SDL_Rect) { 0,0, 48,48 };
@@ -184,6 +197,13 @@ int main (int argc, char* args[]){
     player.lugar = onGround;
 	player.texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
 	assert(player.texture != NULL); 
+	
+	//Criação do buff de pesca
+	player.buff.texture = IMG_LoadTexture(ren,"imgs/minigameIsca.png");
+	player.buff.rect = (SDL_Rect) {220,20,45,60};
+	player.buff.ativo = false;
+	player.buff.velocidade = 0;
+	player.buff.contador = CONTADOR_DEFAULT;
 	#ifdef DEBUG
 		printf("\nPersonagem criado na memoria!");
 	#endif
@@ -231,6 +251,10 @@ int main (int argc, char* args[]){
 	#ifdef DEBUG
 		printf("\nMiniGame criado na memoria");
 	#endif
+	
+	
+	
+	
     /* EXECUÇÃO */
     while(screen != fim){
     	switch (screen) {
