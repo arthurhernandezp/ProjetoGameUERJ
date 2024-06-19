@@ -246,8 +246,8 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							}
 							else if(personagem->rect.x >= 355 && personagem->rect.x <= 401){
 								*screen = casa;
-								personagem->rect.y = 320;
-								personagem->rect.x = 800;
+								personagem->rect.y = 300;
+								personagem->rect.x = 744;
 								personagem->corte.y = personagem->corte.x = 0;
 								break;
 								#ifdef DEBUG
