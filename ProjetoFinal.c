@@ -19,6 +19,12 @@ enum telaStates {menu=0,jogo,casa,telaFinal,fim};
 enum mouseStates {ready=0,cancelled,clicked,dropped,dragging,clicking}; 
 enum minigameState {cancelado = 0, emjogo, concluido};
 enum dialogoState {off = 0,on};
+
+struct dadosPlayer;
+
+// Definição do tipo de função
+typedef void (*MudaTexturaFunc)(SDL_Renderer*, struct dadosPlayer*);
+
 typedef struct dadosMinigame{
 	SDL_Rect rIsca;
 	SDL_Rect rPeixe;
@@ -56,6 +62,7 @@ typedef struct dadosPlayer{
     uint8_t lugar;
 	// lugar 0 onGround; 1 onBoat
 	dadosBuff buff;
+	MudaTexturaFunc mudaTextura;
 }dadosPlayer;
 
 typedef struct dadosBarco{
@@ -137,6 +144,28 @@ const char *nomeScreen(uint8_t screen) {
     }
 }
 
+void mudaTextura(SDL_Renderer* ren,dadosPlayer *personagem){
+	if(personagem->state == idle && personagem->lugar == onGround) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
+	else if(personagem->state == walking && personagem->lugar == onGround ){
+		 personagem->texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
+	}
+	else if(personagem->lugar == onBoat && personagem->state == remando) {
+		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
+		personagem->rect.y = 473;
+	}
+	else if(personagem->lugar == onBoat && personagem->state == fishing){
+		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_fish.png");
+		personagem->rect.y = 467;
+		personagem->corte.y = 0;
+	}
+	else if(personagem->lugar == onBoat && personagem->state == pulling){
+		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_hook.png");
+	}
+	else if(personagem->state == dormindo){
+		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_dormir.png");
+	}
+}
+
 
 SDL_Window* create_window(void) {
     SDL_Window* win = SDL_CreateWindow("ProjetoP2",
@@ -198,6 +227,7 @@ int main (int argc, char* args[]){
     player.state = idle;
     player.lugar = onGround;
 	player.texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
+	player.mudaTextura = mudaTextura;
 	assert(player.texture != NULL); 
 	
 	//Criação do buff de pesca
