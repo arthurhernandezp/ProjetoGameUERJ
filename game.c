@@ -7,7 +7,6 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 			printf("Numero de peixes no inventario: %d\n", inventario->n);
 			printf("Velocidade do buff de pesca: %d\n",personagem->buff.velocidade);
 		#endif
-		
 		uint8_t cur_state = 0;
 		uint8_t i = 0; uint8_t contFundo = 0;
 		dadosMouse mouse;
@@ -60,7 +59,14 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		int8_t var = 1;
 		uint8_t randAux = 0;
 		uint8_t pescaAux = 0;
+	  			
+		 // Initialize SDL video and audio systems
+		SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 
+		// Initialize SDL mixer
+		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+		Mix_Volume(1, 4);
+		Mix_Music *backgroundSound = Mix_LoadMUS("minigameSom.mp3");
 		while (*screen == jogo) {	
 			#ifdef DEBUG
 				//printf("\nLoop principal rodando, screen: %d\n",*screen);
@@ -68,7 +74,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 			espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 		  	SDL_Event evt; int isevt = AUX_WaitEventTimeoutCount(&evt,&espera);    
 		  	antes = SDL_GetTicks();
-		  	
+
 		  	if(isevt){       
 				switch (evt.type) {
 					case SDL_WINDOWEVENT:
@@ -157,7 +163,6 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 							break;
 							default:
 								if(personagem->state == walking) personagem->state = idle;
-								//SDL_FlushEvent(evt.type);
 								break;
 						
 			 		}
@@ -180,7 +185,10 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 						if(evt.button.state==SDL_PRESSED) {
 						 	cur_state = clicking;
 						}
-		                if(personagem->state == pulling) minigame->iscaSpeed = rand()%5+10;
+		                if(personagem->state == pulling) {
+		                	minigame->iscaSpeed = rand()%5+10;
+							Mix_PlayMusic(backgroundSound, 1);
+						}
 		            break;
 		            case SDL_MOUSEBUTTONUP:
 					   if(cur_state == clicking) cur_state = clicked;
@@ -302,6 +310,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 						pescaAux++;
 						if(pescaAux == 10) {
 							personagem->state = pulling;
+
 							pescaAux = 0;
 							personagem->corte.x = 0;
 							randAux = rand() % 7;
@@ -323,6 +332,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					}
 					else if(personagem->state == pulling){
 						minigame->state = emjogo;
+
 						if(pescaAux == 5){
 							if(personagem->corte.x < 96) personagem->corte.x += 48;
 							else personagem->corte.x = 0;
@@ -354,11 +364,13 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 			if(personagem->state != pulling && minigame->state == emjogo){
 				minigame->state = cancelado;
 				personagem->state = remando;
+				Mix_HaltMusic();
 			}
 			else{
 				if(minigame->rPeixe.x >= 875){
 					minigame->state == cancelado;
 					if(!listaCheia(*inventario)){
+						Mix_HaltMusic();
 						#ifdef DEBUG
 							printf("[%d,%d]INSERINDO\n",inventario->i,inventario->j);
 						#endif
@@ -383,6 +395,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					minigame->rPeixe.x = 655;
 					minigame->state = cancelado;
 					personagem->state = remando;
+					Mix_HaltMusic();
 				}
 			}
 
