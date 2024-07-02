@@ -120,7 +120,7 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 					espera +=250;
 				}
 			}
-			mudaTextura(ren,personagem);
+			personagem->mudaTextura(ren,personagem);
 			SDL_RenderClear(ren);
 
 			
