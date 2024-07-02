@@ -1,25 +1,3 @@
-void mudaTextura(SDL_Renderer* ren,dadosPlayer *personagem){
-	if(personagem->state == idle && personagem->lugar == onGround) personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_idle.png");
-	else if(personagem->state == walking && personagem->lugar == onGround ){
-		 personagem->texture = IMG_LoadTexture(ren, "imgs/fisherman2.png");
-	}
-	else if(personagem->lugar == onBoat && personagem->state == remando) {
-		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_row.png");
-		personagem->rect.y = 473;
-	}
-	else if(personagem->lugar == onBoat && personagem->state == fishing){
-		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_fish.png");
-		personagem->rect.y = 467;
-		personagem->corte.y = 0;
-	}
-	else if(personagem->lugar == onBoat && personagem->state == pulling){
-		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_hook.png");
-	}
-	else if(personagem->state == dormindo){
-		personagem->texture = IMG_LoadTexture(ren, "imgs/Fisherman_dormir.png");
-	}
-}
-
 void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],uint8_t * screen,dadosMinigame *minigame){
 	if(*screen == jogo){
 		#ifdef DEBUG
@@ -408,7 +386,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 				}
 			}
 
-			mudaTextura(ren,personagem);
+			personagem->mudaTextura(ren,personagem);
 
 			//Switch para controlar a mudança do fundo de tela
 			switch(ceu->fundoAux){
