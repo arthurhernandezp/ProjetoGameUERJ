@@ -1,8 +1,11 @@
-void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inventario,dadosCeu *ceu,uint8_t * screen){
+#ifdef JOYSTICK
+	void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inventario,dadosCeu *ceu,uint8_t * screen, int* serialPort){
+#else
+	void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inventario,dadosCeu *ceu,uint8_t * screen){
+#endif
+
 	if(*screen == casa){
-		Uint32 antes = 0;
-		int espera = 0;    
-		
+
 		SDL_Rect casaRect = {124,103,752,394};
 		SDL_Texture* fundoCasa = IMG_LoadTexture(ren, "imgs/interior_house.jpg");
 		
@@ -16,7 +19,38 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 		SDL_Texture* avatar = IMG_LoadTexture(ren, "imgs/barco.png");
 		SDL_Rect avtRect = {20,20,180,75};
 		
+		#ifdef JOYSTICK
+			int xDirection = 0, yDirection = 0, buttonState = 0;
+			int buttonL = 0, buttonM = 0, buttonR = 0;
+			char buffer[256];
+			char tempBuffer[256];
+			int tempIndex = 0;
+			int lastButtonState,lastButtonLState,lastButtonMState,lastButtonRState = 0;
+			uint8_t animacaoAux = 0;
+		#else
+			Uint32 antes = 0;
+			int espera = 0; 
+		#endif
+		
 		while(*screen == casa){
+			#ifdef JOYSTICK
+				int numBytes = read(*serialPort, buffer, sizeof(buffer) - 1);
+				if(numBytes> 0) {		
+		  			#include "joystick_commands_casa.c"
+		  		}
+		  		SDL_Event event;
+				while (SDL_PollEvent(&event)) {
+					if (event.type == SDL_QUIT) {
+						close(*serialPort);
+						*screen = fim;
+					}else if(event.type == SDL_KEYUP && event.key.keysym.sym == SDLK_ESCAPE ){
+						*screen = menu;
+						#ifdef DEBUG
+	                        printf("Estado de Screen mudou para 'menu' usando SDLK_ESCAPE\n");  // Debugging log
+						#endif
+					}
+				}
+			#else
 			espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 		  	SDL_Event evento; int isevt = AUX_WaitEventTimeoutCount(&evento,&espera);    
 		  	antes = SDL_GetTicks();	
@@ -120,6 +154,7 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 					espera +=250;
 				}
 			}
+			#endif
 			personagem->mudaTextura(ren,personagem);
 			SDL_RenderClear(ren);
 
@@ -150,6 +185,5 @@ void interiorCasa(SDL_Renderer* ren,dadosPlayer *personagem,dadosInventario *inv
 	}
 }
 	
-
 
 
