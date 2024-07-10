@@ -1,4 +1,9 @@
-void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],uint8_t * screen,dadosMinigame *minigame){
+#ifdef JOYSTICK
+	void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],uint8_t * screen,dadosMinigame *minigame, int* serialPort){
+#else
+	void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco *barco,dadosInventario *inventario,char * listaItens[],uint8_t * screen,dadosMinigame *minigame){
+#endif
+
 	if(*screen == jogo){
 		#ifdef DEBUG
 			printf("\nIniciando Jogo\n");
@@ -67,15 +72,40 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 		Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 		Mix_Volume(1, 4);
 		Mix_Music *backgroundSound = Mix_LoadMUS("minigameSom.mp3");
+		
+		
+		#ifdef DEBUG
+			printf("Inicio das variaveis da porta serial");
+		#endif
+		
+		#ifdef JOYSTICK
+			int xDirection = 0, yDirection = 0, buttonState = 0;
+			int buttonL = 0, buttonM = 0, buttonR = 0;
+			char buffer[256];
+			char tempBuffer[256];
+			int tempIndex = 0;
+			int lastButtonState,lastButtonLState,lastButtonMState,lastButtonRState = 0;
+			uint8_t animacaoAux = 0;
+			mouse.state = 1;
+		#endif
 		while (*screen == jogo) {	
-			#ifdef DEBUG
-				//printf("\nLoop principal rodando, screen: %d\n",*screen);
-			#endif
+			#ifdef JOYSTICK
+				int numBytes = read(*serialPort, buffer, sizeof(buffer) - 1);
+				#include "joystick_commands.c"
+		        SDL_Event event;
+				while (SDL_PollEvent(&event)) {
+					if (event.type == SDL_QUIT) {
+						close(*serialPort);
+						*screen = fim;
+					}
+				}
+			#else
 			espera = MAX(espera - (int)(SDL_GetTicks() - antes), 0);
 		  	SDL_Event evt; int isevt = AUX_WaitEventTimeoutCount(&evt,&espera);    
 		  	antes = SDL_GetTicks();
-
-		  	if(isevt){       
+			
+		  	if(isevt){    
+	  			
 				switch (evt.type) {
 					case SDL_WINDOWEVENT:
 		            	if (SDL_WINDOWEVENT_CLOSE == evt.window.event){
@@ -354,6 +384,7 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					}
 				}
 			}
+			#endif
 			//trata a passagem de tela do jogo para o menu ativando o cursor windowns novamente
 			if(*screen == menu) {
 				mouse.state = 0;
@@ -371,6 +402,9 @@ void rodaJogo(SDL_Renderer* ren,dadosPlayer *personagem,dadosCeu *ceu,dadosBarco
 					minigame->state == cancelado;
 					if(!listaCheia(*inventario)){
 						Mix_HaltMusic();
+						#ifdef JOYSTICK
+							lastButtonState = 0;
+						#endif
 						#ifdef DEBUG
 							printf("[%d,%d]INSERINDO\n",inventario->i,inventario->j);
 						#endif
