@@ -8,6 +8,12 @@
 #include <string.h>
 #include <SDL2/SDL_mixer.h>
 #include <stdint.h>
+#ifdef JOYSTICK
+	#include <stdlib.h>
+	#include <fcntl.h>
+	#include <unistd.h>
+	#include <termios.h>
+#endif
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 #define CONTADOR_DEFAULT 20
 #define VELOCIDADE_CONTADOR 5
@@ -285,6 +291,44 @@ int main (int argc, char* args[]){
 	#endif
 	
 	
+	
+	#ifdef DEBUG
+		printf("\nInicio do tratamento da porta serial");
+	#endif
+	#ifdef JOYSTICK
+	    // Configuração da porta serial
+    int serialPort = open("/dev/ttyACM0", O_RDWR);
+    if (serialPort < 0) {
+        perror("Erro ao abrir a porta serial");
+        return 1;
+    }
+
+    struct termios tty;
+    if (tcgetattr(serialPort, &tty) != 0) {
+        perror("Erro ao obter atributos da porta serial");
+        close(serialPort);
+        return 1;
+    }
+
+		cfsetispeed(&tty, B9600);
+		cfsetospeed(&tty, B9600);
+
+		tty.c_cflag |= (CLOCAL | CREAD); // Enable the receiver and set local mode
+		tty.c_cflag &= ~CSIZE;
+		tty.c_cflag |= CS8; // Set 8 data bits
+		tty.c_cflag &= ~PARENB; // No parity
+		tty.c_cflag &= ~CSTOPB; // 1 stop bit
+		tty.c_cflag &= ~CRTSCTS; // No hardware flow control
+
+		tty.c_cc[VMIN] = 1; // Read at least 1 character
+		tty.c_cc[VTIME] = 5; // 0.5 seconds read timeout
+
+		if (tcsetattr(serialPort, TCSANOW, &tty) != 0) {
+		    perror("Erro ao definir atributos da porta serial");
+		    close(serialPort);
+		    return 1;
+		}
+	#endif
     /* EXECUÇÃO */
     while(screen != fim){
     	switch (screen) {
@@ -292,11 +336,19 @@ int main (int argc, char* args[]){
                 chamaMenu(ren,&screen,&screenAnterior);
                 break;
             case jogo:  
-                rodaJogo(ren,&player,&ceu,&barco,&inventario,listaItens,&screen,&minigame);
+            	#ifdef JOYSTICK
+					rodaJogo(ren, &player, &ceu, &barco, &inventario, listaItens, &screen, &minigame, &serialPort);
+				#else
+					rodaJogo(ren, &player, &ceu, &barco, &inventario, listaItens, &screen, &minigame);
+				#endif
                 screenAnterior = jogo;
                 break;
             case casa:
-            	interiorCasa(ren,&player,&inventario,&ceu,&screen);
+            	#ifdef JOYSTICK
+            		interiorCasa(ren,&player,&inventario,&ceu,&screen,&serialPort);
+				#else
+        			interiorCasa(ren,&player,&inventario,&ceu,&screen);	
+        		#endif
                 screenAnterior = casa;
             	break;
             case telaFinal:
