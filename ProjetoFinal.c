@@ -28,7 +28,7 @@ enum dialogoState {off = 0,on};
 
 struct dadosPlayer;
 
-// Definição do tipo de função
+// Definição do tipo de função.
 typedef void (*MudaTexturaFunc)(SDL_Renderer*, struct dadosPlayer*);
 
 typedef struct dadosMinigame{
